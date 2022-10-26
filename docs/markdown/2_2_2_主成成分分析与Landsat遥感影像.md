@@ -841,3 +841,4 @@ plt.show()
 [1] Cavin Hackeling.张浩然译.scikit-learning 机器学习[M].人民邮电出版社.2019.2.（ Cavin Hackeling. Mastering Machine Learning with scikit-learn[M].Packt Publishing Ltd.July 2017.Second published.）
 
 [2] [日]高桥 信著作,Inoue Iroha,株式会社 TREND-PRO漫画制作,腾永红译.漫画线性代数[M].科学出版社.北京.2009.08.
+
