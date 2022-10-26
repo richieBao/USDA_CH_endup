@@ -7,6 +7,7 @@
 从1970s年代，地球资源卫星（The Landsat series of satellites）几乎不间断的提供全球范围地球表面中分辨率多光谱遥感影像数据。不间断的数据记录，增强了应用数据分析的潜力，可以帮助各领域的研究者在人口不断增长，城市不断发展下，关注粮食、水、森林等自然资源，应用其无以伦比的影像质量、覆盖率、细节价值分析城市的发展与自然平衡的问题（美国地质调查局 [United States Geological Survey，USGS-earthexplorer](https://earthexplorer.usgs.gov/)<sup>①</sup>）。
 
 > 注，下述[Mermaid](https://mermaid-js.github.io/mermaid/#/)<sup>②</sup>图表代码，在JupyterLab下无法显示，但是在Markdown下通常显示。
+
 ```mermaid
 gantt
 
@@ -25,8 +26,6 @@ Landsat 7 April 1999 -                        :active,    des1, 1999-04,2020-12
 Landsat 8 February 2013 -                     :active,    des1, 2013-02,2020-12
 Landsat 9 2020 -                              :         des1, 2020-12,2020-12
 ```
-
-<img src="./imgs/2_2_2/2_2_2_01.png">
 
 Landsat陆地资源卫星的数据为多光谱，通过安装在环绕地球轨道的太空卫星上的平台收集。各个卫星传感器所获遥感影像数据的波段情况有所差异，下述为Landsat 8各波段的情况：
 
