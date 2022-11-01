@@ -56,7 +56,7 @@
     * [4.1 城市空间数据分析方法理论研究框架](./markdown/4_1_城市空间数据分析方法理论研究框架.md)
     * [4.2 代码集成标准与工具库](./markdown/4_2_代码集成标准与工具库.md)
 * 附：Python基础核心
-    * [PCS_0 学写代码的方式](./markdown/pcs_0_学写代码的方式.md)
+    * [+ 学写代码的方式](./markdown/pcs_0_学写代码的方式.md)
     * [PCS_1 善用print()，基础运算，变量及赋值](./markdown/pcs_1.md)
     * [PCS_2 数据结构-list_tuple_dict_set](./markdown/pcs_2.md)
     * [PCS_3 数据结构-string](./markdown/pcs_3.md)
