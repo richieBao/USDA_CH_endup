@@ -67,7 +67,7 @@
     * [PCS_8 (OOP)类Classes-定义，继承，__init__()构造方法，私有变量/方法](./markdown/pcs_8.md)
     * [PCS-9 (OOP)类Classes-Decorators(装饰器)_Slots](./markdown/pcs_9.md)
     * [PCS-10 异常-Errors and Exceptions](./markdown/pcs_10.md)
-    * [PCS_X 测验-练习](./markdown/pcs_quize.md)  
+    * [PCS_X Python新特性更新](./markdown/pcs_quize.md)  
 * 检索
     * [数据检索](./markdown/dataIdx.md)
     * [TEMP](./markdown/temp.md)
