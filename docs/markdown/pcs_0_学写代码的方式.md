@@ -71,17 +71,17 @@
 
 参考文献（References）:
 
-[1] Mayer, C. (2018). Coffee break python: 50 workouts to kickstart your rapid code understanding in python.
+[1] Mayer, C. Coffee break python: 50 workouts to kickstart your rapid code understanding in python[M]. September 16, 2018.
 
-[2] Shaw, Z. A. (2013). Learn python the hard way: A very simple introduction to the terrifyingly beautiful world of computers and code. Addison-Wesley.
+[2] Shaw, Z. A. Learn python3 the hard way: A very simple introduction to the terrifyingly beautiful world of computers and code[M]. Addison-Wesley Professional,June 26, 2017.
 
-[3] Shaw, Z. A. (2016). Learn more python the hard way: The next step for new python programmers. Addison-Wesley Professional.
+[3] Shaw, Z. A. Learn more python the hard way: The next step for new python programmers[M]. Addison-Wesley Professional, September 1, 2017.
 
-[4] Publishing, A. (2021). Python programming for beginners: The ultimate guide for beginners to learn python programming: Crash course on python programming for beginners.
+[4] Publishing, A. Python programming for beginners: The ultimate guide for beginners to learn python programming[M].October 26, 2022.
 
-[5] Rao, B. N. (2017). Learning python.
+[5] Rao, B. N. Learning python[M]. CyberPlus Infotech Pvt. Ltd, February 14, 2021.
 
-[6] Snowden, J. (2021). Python for beginners A practical guide for the people who want to learn python the right and simple way.
+[6] Snowden, J. Python for beginners A practical guide for the people who want to learn python the right and simple way[M]. Independently published, December 2, 2020.
 
 [7] 包瑞清; 学习PYTHON—做个有编程能力的设计师, 江苏凤凰科学技术出版社, 2015
 
