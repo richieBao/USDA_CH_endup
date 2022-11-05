@@ -40,13 +40,15 @@
       loadSidebar: true,
       loadNavbar: true,
       maxLevel: 4,
-      subMaxLevel: 3,
+      subMaxLevel: 6,
       mergeNavbar: true,
       search: {
+            maxAge: 86400000, // Expiration time, the default one day
             paths: 'auto',
             placeholder: '🔍 Type to search ',
             noData: '😞 No Results! ',
-            depth: 3
+            depth: 6,
+            hideOtherSidebarContent: false, // whether or not to hide other sidebar content
         },
         pagination: {
             previousText: 'Previous',
@@ -116,9 +118,11 @@
 <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/vuep/dist/vuep.min.js"></script>
+<!--搜索功能-->
+<script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
 <!--评论功能，添加issue-->
 <script src="//unpkg.com/gitalk/dist/gitalk.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.js"></script>-->
 <script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
 <!--放大图片-->
 <script src="//unpkg.com/docsify/lib/plugins/zoom-image.js"></script>

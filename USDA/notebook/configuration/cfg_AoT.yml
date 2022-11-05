@@ -1,0 +1,14 @@
+---
+epsg_wgs84: 4326
+Chicago_epsg: 32616
+
+postgreSQL:
+    myusername: 'postgres'
+    mypassword: '123456'
+    mydatabase: 'AoT_20220831'
+    geom_col: 'geometry' 
+
+AoT:
+    AoT_nodes_fp: './data/AoT_Chicago.complete.2022-08-31/nodes.csv'    
+    AoT_sensors_fp: './data/AoT_Chicago.complete.2022-08-31/sensors.csv'
+    AoT_data_fp: 'D:\AoT\AoT_Chicago.complete.2022-08-31\'
