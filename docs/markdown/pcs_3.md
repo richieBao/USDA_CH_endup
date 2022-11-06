@@ -25,7 +25,7 @@
 <tr>
 <td> 
 
-__3.1__ 字符串（String）与文本文件
+#### __3.1__ 字符串（String）与文本文件
 
 </td>
 <td>
@@ -54,7 +54,7 @@ __3.1__ 字符串（String）与文本文件
 <tr>
 <td> 
 
-__3.2__ 文件的打开与读写——用open()_python内置函数（built-in functions）
+#### __3.2__ 文件的打开与读写——用open()_python内置函数（built-in functions）
 
 </td>
 <td>
@@ -321,7 +321,7 @@ print(poi_info_dict)
 <tr>
 <td> 
 
-__3.3__ 常用字符串操作方法
+#### __3.3__ 常用字符串操作方法
 
 </td>
 <td>
@@ -611,7 +611,7 @@ print(list(map(ord,['\a','\b','\f','\n','\r','\t','\v','\\','\'','\"',])))
 <tr>
 <td> 
 
-__3.4__ 字符串格式化
+#### __3.4__ 字符串格式化
 
 </td>
 <td>
@@ -1093,7 +1093,7 @@ print(f'The time is {dt:%Y-%m-%d (%a) %H:%M:%S}')
 <tr>
 <td> 
 
-__3.5__ 正则表达式（[regular expression，re](https://docs.python.org/3/library/re.html)）<sup>①</sup>
+#### __3.5__ 正则表达式（[regular expression，re](https://docs.python.org/3/library/re.html)）<sup>①</sup>
 
 </td>
 <td>
