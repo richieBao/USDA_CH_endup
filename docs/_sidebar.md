@@ -3,7 +3,7 @@
 
 * 1\. 准备
     * [1.1 代码的整洁之道](./markdown/1_1_代码的整洁之道.md)
-    * [1.2 python解释器与笔记](./markdown/1_2_python解释器与笔记.md)
+    * [1.2 Python解释器与笔记](./markdown/1_2_python解释器与笔记.md)
     * [1.3 数据库与数据分析基本流程组织](./markdown/1_3_数据库与数据分析基本流程组织.md)
 * 2\. 基础实验
     * [+ 城市空间数据计算](./markdown/城市空间数据计算.md) 
@@ -33,10 +33,23 @@
         * [2.6.4 对象检测、实例分割与人流量估算和对象统计](./markdown/2_6_4_对象检测_实例分割与人流量估算和对象统计.md)
         * [2.6.5 Cityscapes数据集、图像分割与城市空间对象统计](./markdown/2_6_5_Cityscapes数据集_图像分割与城市空间对象统计.md)
         * [2.6.6 高分辨率遥感影像解译(to deprecate？)](./markdown/2_6_6_高分辨率遥感影像解译.md)
-    * [2.7 时空数据分析](./markdown/2_7_时空数据分析.md)    
-    * [2.8 点云数据处理与内存管理](./markdown/.md)
-        * [2.8.1 点云数据处理](./markdown/2_8_1_点云数据处理.md)
-        * [2.8.2 天空视域因子计算与内存管理](./markdown/2_8_2_天空视域因子计算与内存管理.md)
+        * [2.6.7 NAIP航拍影像与分割模型库及Colaboratory和Planetary Computer Hub](./markdown/2_6_7_NAIP航拍影像与分割模型库及Colaboratory.md)
+    * [2.7 时空数据分析](./markdown/2_7_时空数据分析.md)   
+        * [2.7.1 城市环境传感器AoT（SAGE）数据预处理](./markdown/2_7_1_城市环境传感器AoT数据预处理.md)
+        * [2.7.2 时间序列分析](./markdown/2_7_2_时间序列分析.md)
+        * [2.7.3 空间自相关分析](./markdown/2_7_3_空间自相关分析.md)
+        * [2.7.4 空间动力学——空间马尔可夫链](./markdown/2_7_4_空间马尔可夫链.md)
+        * [2.7.5 空间动力学——空间Kendall’s Tau](./markdown/2_7_5_肯德尔等级.md)
+        * [2.7.6 不平等性和空间隔离](./markdown/2_7_6_不平等性和空间隔离.md)
+    * [2.8 复杂网络（图论）](./markdown/.md)
+        * [2.8.1 复杂网络（图论）基础与NetworkX](./markdown/2_8_1_复杂网络图论基础与NetworkX.md)
+        * [2.8.2 图属性的基本度量](./markdown/2_8_2_图属性的基本度量.md)
+        * [2.8.3 公共交通复合网络构建](./markdown/2_8_3_公共交通复合网络构建.md)
+    * [2.9 智能体模型（ABM）](./markdown/.md)
+        * [2.9.1 NetLogo，Mesa和Repast4Py](./markdown/2_9_1_netlogo_mesa_repast4py.md)        
+    * [2.10 点云数据处理与内存管理](./markdown/.md)
+        * [2.10.1 点云数据处理](./markdown/2_8_1_点云数据处理.md)
+        * [2.10.2 天空视域因子计算与内存管理](./markdown/2_8_2_天空视域因子计算与内存管理.md)
 * 3\. 专项研究
     * [+ 专项代码结构](./markdown/3_1_项目代码结构.md)
     * [3.1 城市空间 形态-结构-功能](./markdown/.md)
@@ -70,6 +83,7 @@
     * [PCS_X Python新特性更新](./markdown/pcs_quize.md)  
 * 检索
     * [数据检索](./markdown/dataIdx.md)
+    * [数学符号列表](./markdown/)
     * [TEMP](./markdown/temp.md)
 
 
