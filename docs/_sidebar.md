@@ -83,7 +83,7 @@
     * [PCS_X Python新特性更新](./markdown/pcs_quize.md)  
 * 检索
     * [数据检索](./markdown/dataIdx.md)
-    * [数学符号列表](./markdown/)
+    * [数学符号列表](./markdown/数学符号列表.md)
     * [TEMP](./markdown/temp.md)
 
 
