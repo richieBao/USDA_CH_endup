@@ -3078,7 +3078,7 @@ check_module('dataset',args.impoftlib_module)
 
 参考文献（References）:
 
-[1] Dataset Overview
+[1] Cityscapes Dataset Overview, <https://www.cityscapes-dataset.com/dataset-overview/>.
 
 [2] Tao, A., Sapra, K. & Catanzaro, B. Hierarchical Multi-Scale Attention for Semantic Segmentation. (2020).https://arxiv.org/abs/2005.10821; https://github.com/NVIDIA/semantic-segmentation
 
