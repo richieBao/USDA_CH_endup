@@ -1005,7 +1005,9 @@ def raster_show(raster_fp,title='raster',vmin_vmax=[0.25,0.95],cmap="turbo"):
     titles=[title]
     ep.plot_bands(array, cmap=cmap, cols=1, title=titles, vmin=np.quantile(array,vmin_vmax[0]), vmax=np.quantile(array,vmin_vmax[1]))        
 # 将每批次样本X的形状转换为(batch_size,-1)
+# from torch import nn
 class flattenLayer(nn.Module):    
+
     def __init__(self):
         super(flattenLayer,self).__init__()
     def forward(self,x):
