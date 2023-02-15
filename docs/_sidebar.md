@@ -83,6 +83,7 @@
 * 检索
     * [数据检索](./markdown/dataIdx.md)
     * [数学符号列表](./markdown/数学符号列表.md)
+    * [Linux常用命令](./markdown/Linux常用命令.md)
     * [TEMP](./markdown/temp.md)
 
 
