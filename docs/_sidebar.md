@@ -58,7 +58,7 @@
     * [3.2 尺度作用](./markdown/.md)
     * [3.3 更新策略](./markdown/.md)
     * [3.4 模式生成](./markdown/.md)
-    * [3.5 标记度量](./markdown/.md)
+    * [3.5 标记度量](./markdown/3_5_标记度量.md)
     * [3.6 边缘效应](./markdown/.md)
     * [3.7 条件维度](./markdown/.md)
     * [3.7 评估分类](./markdown/.md)
