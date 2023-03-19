@@ -56,7 +56,7 @@
     * [+ 专项代码结构](./markdown/3_1_项目代码结构.md)
     * [3.1 权重决策](./markdown/3_1_权重决策.md)
     * [3.2 尺度作用](./markdown/.md)
-    * [3.3 更新策略](./markdown/.md)
+    * [3.3 更新策略](./markdown/3_3_更新策略.md)
     * [3.4 模式生成](./markdown/.md)
     * [3.5 标记距离](./markdown/3_5_标记度量.md)
     * [3.6 边缘效应](./markdown/.md)
