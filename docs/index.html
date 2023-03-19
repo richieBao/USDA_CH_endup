@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css">
   <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/vuep/dist/vuep.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.css">
   <script>
     var _hmt = _hmt || [];
     (function () {
@@ -101,6 +102,14 @@
                 });
             }
             ],
+            pseudocode: {
+                indentSize: '1.2em',
+                commentDelimiter: '//',
+                lineNumber: false,
+                lineNumberPunc: ':',
+                noEnd: false,
+                titlePrefix: 'Algorithm'
+            },            
         
     }
 </script>
@@ -161,6 +170,9 @@
 <!-- CDN files for docsify-katex -->
 <script src="//cdn.jsdelivr.net/npm/docsify-katex@latest/dist/docsify-katex.js"></script>
 <!-- or <script src="//cdn.jsdelivr.net/gh/upupming/docsify-katex@latest/dist/docsify-katex.js"></script> -->
+
+<script src="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/h-hg/docsify-pseudocode/dist/docsify-pseudocode.min.js"></script>
 
 </body>
 </html> 
