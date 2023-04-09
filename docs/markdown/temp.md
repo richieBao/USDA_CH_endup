@@ -148,3 +148,46 @@ Hello World!
 \end{algorithmic}
 \end{algorithm}
 ```
+
+
+```algorithm
+% GAN
+\begin{algorithm}
+\caption{Minibatch stochastic gradient descent training of generative adversarial nets. The number of steps to apply to the discriminator, $k$, is a hyperparameter. We used $k=1$, the least expensive option, in our experiments.}
+\begin{algorithmic}
+\FOR{number of training iterations}
+\FOR{$k$ steps}
+\STATE • Sample minibatch of $m$ noise samples $\left\{\boldsymbol{z}^{(1)}, \ldots, \boldsymbol{z}^{(m)}\right\}$ from noise prior $p_g(\boldsymbol{z})$.
+\STATE • Sample minibatch of $m$ examples $\left\{\boldsymbol{x}^{(1)}, \ldots, \boldsymbol{x}^{(m)}\right\}$ from data generating distribution $p_{\text {data }}(\boldsymbol{x})$.
+\STATE • Update the discriminator by ascending its stochastic gradient:$\nabla_{\theta_d} \frac{1}{m} \sum_{i=1}^m\left[\log D\left(\boldsymbol{x}^{(i)}\right)+\log \left(1-D\left(G\left(\boldsymbol{z}^{(i)}\right)\right)\right)\right] .$
+\ENDFOR
+\STATE • Sample minibatch of $m$ noise samples $\left\{\boldsymbol{z}^{(1)}, \ldots, \boldsymbol{z}^{(m)}\right\}$ from noise prior $p_g(\boldsymbol{z})$.
+\STATE • Update the generator by descending its stochastic gradient:$\nabla_{\theta_g} \frac{1}{m} \sum_{i=1}^m \log \left(1-D\left(G\left(\boldsymbol{z}^{(i)}\right)\right)\right) \text {. }$
+\ENDFOR
+\STATE The gradient-based updates can use any standard gradient-based learning rule. We used momentum in our experiments.
+\end{algorithmic}
+\end{algorithm}
+```
+
+```algorithm
+% WGAN
+\begin{algorithm}
+\caption{WGAN, our proposed algorithm. All experiments in the paper used the default values $\alpha=0.00005, c=0.01, m=64, n_{\text {critic }}=5$}
+\begin{algorithmic}
+\REQUIRE $\alpha$, the learning rate. $c$, the clipping parameter. $m$, the batch size. $n_{\text {critic }}$, the number of iterations of the critic per generator iteration.
+\REQUIRE $w_0$, initial critic parameters. $\theta_0$, initial generator's parameters.
+\WHILE{$\theta$ has not converged}
+\FOR{$t=0, \ldots, n_{\text {critic }}$}
+\STATE Sample $\left\{x^{(i)}\right\}_{i=1}^m \sim \mathbb{P}_r$ a batch from the real data.
+\STATE Sample $\left\{z^{(i)}\right\}_{i=1}^m \sim p(z)$ a batch of prior samples.
+\STATE $g_w \leftarrow \nabla_w\left[\frac{1}{m} \sum_{i=1}^m f_w\left(x^{(i)}\right)-\frac{1}{m} \sum_{i=1}^m f_w\left(g_\theta\left(z^{(i)}\right)\right)\right] $
+\STATE $w \leftarrow w+\alpha \cdot \operatorname{RMSProp}\left(w, g_w\right)$
+\STATE $w \leftarrow \operatorname{clip}(w,-c, c)$
+\ENDFOR
+\STATE Sample $\left\{z^{(i)}\right\}_{i=1}^m \sim p(z)$ a batch of prior samples.
+\STATE $g_\theta \leftarrow-\nabla_\theta \frac{1}{m} \sum_{i=1}^m f_w\left(g_\theta\left(z^{(i)}\right)\right) $
+\STATE $\theta \leftarrow \theta-\alpha \cdot \operatorname{RMSProp}\left(\theta, g_\theta\right)$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+```
