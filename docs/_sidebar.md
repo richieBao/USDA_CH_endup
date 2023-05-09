@@ -63,7 +63,7 @@
         * [3.4-C cGAN——模式转化和未知区域地理信息修复](./markdown/3_4_C_模式生成.md)   
     * [3.5 推理学习](./markdown/.md)   
         * [3.5-A 概率论基础](./markdown/3_5_A_概率论基础.md)      
-        * [3.5-A 概率图](./markdown/.md)
+        * [3.5-B 概率图](./markdown/.md)
     * [3.6 边缘效应](./markdown/.md)
     * [3.7 条件维度](./markdown/.md)
     * [3.8 权衡协同](./markdown/.md)
