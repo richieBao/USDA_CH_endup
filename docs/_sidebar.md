@@ -67,8 +67,8 @@
         * [3.5-C 生态系统服务价值的贝叶斯网络构建与推理](./markdown/3_5_C_生态系统服务价值的贝叶斯网络构建与推理.md)
         * [3.5-D 马尔可夫随机场（MRF）和城市降温模型的 MRF 推理](./markdown/3_5_D_MRF.md)
     * [3.6 时空情境](./markdown/.md)
-    * [3.7 条件维度](./markdown/.md)
-    * [3.8 权衡协同](./markdown/.md)
+    * [3.7 尺度效应](./markdown/.md)
+    * [3.8 条件维度](./markdown/.md)
     * [3.9 边缘效应](./markdown/.md)
     * [3.10 复杂系统](./markdown/.md)
 * 4\. 理论工具
