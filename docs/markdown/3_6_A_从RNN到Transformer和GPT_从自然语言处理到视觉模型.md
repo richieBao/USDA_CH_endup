@@ -2552,19 +2552,7 @@ print("ViT results", results)
 
 
 
-<iframe id="tensorboard-frame-c963cfe0afae5a3b" width="100%" height="800" frameborder="0">
-</iframe>
-<script>
-  (function() {
-    const frame = document.getElementById("tensorboard-frame-c963cfe0afae5a3b");
-    const url = new URL("/", window.location);
-    const port = 8893;
-    if (port) {
-      url.port = port;
-    }
-    frame.src = url;
-  })();
-</script>
+<img src="./imgs/3_6/3_6_19.png" height='auto' width='auto' title="caDesign">
 
 
 
