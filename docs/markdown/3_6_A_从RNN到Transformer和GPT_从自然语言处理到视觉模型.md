@@ -1,6 +1,6 @@
 > Created on Mon Jun 12 15:03:15 2023 @author: Richie Bao-caDesign设计(cadesign.cn)
 
-# 3.6 从 RNN 到 Transformer 和 GPT，从自然语言处理到视觉模型
+# 3.6-A 从 RNN 到 Transformer 和 GPT，从自然语言处理到视觉模型
 
 ## 3.6.1 从原始的 RNN 到 LSTM
 
@@ -1310,11 +1310,11 @@ print(embedding(corpus_0[0]))
 
 以Mikolov, T.等人 2013 年发表的两篇论文<sup>[15,18]</sup>为主，参考实现该论文方法的代码实现<sup>[19]</sup>，解释学习语料库估计词嵌入的方法。根据给定窗口语境下输入词（X）和输出词(y)的相对位置，文中描述了两类结构模型，一个称为 CBOW（Continuous Bag-of-Words），另一个称为 Skip-gram。如图 <sup>[15]</sup>
 
-<img src="../imgs/3_6/3_6_10.png" height='auto' width=600 title="caDesign"> 
+<img src="./imgs/3_6/3_6_10.png" height='auto' width=600 title="caDesign"> 
 
 例如对于 'Efﬁcient Estimation of Word Representations in Vector Space' 这个短语（不区分大小写，含停用词），如果以词`word`为输出$w(t)$，以`word`邻近指定长度的词为输入，如`Estimation`即$w(t-2)$、`of`即$w(t-1)$加上`Representations`即$w(t+1)$、` in`即$w(t+2)$，则该种结构模型为 CBOW；如果以词`word`为输入，而以邻近指定长度的词为输出，例如`Estimation`、`of`加上`Representations`、`in`（同 CBOW 的输入），则该种结构模型为 Skip-gram，又如下图，标识了中心词和语境的概念。
 
-<img src="../imgs/3_6/3_6_12.png" height='auto' width=600 title="caDesign"> 
+<img src="./imgs/3_6/3_6_12.png" height='auto' width=600 title="caDesign"> 
 
 因此选择的模型不同，构建数据集所配置的输入（解释变量）$X$和输出（结果变量）`y`不同。因为 Skip-gram 结构模型表现要好于 CBOW，因此代码示例选择 Skip-gram 模型，其公式表示为$\frac{1}{T} \sum_{t=1}^T \sum_{-c \leq j \leq c, j \neq 0} \log p\left(w_{t+j} \mid w_t\right)$，式中，$c$为训练语境（上下文）窗口大小（可以是中心词$w_t$的函数），较大的值$c$产生更多的训练样本，从而获得更高的准确率，但训练时间也会增加。
 
@@ -1397,7 +1397,7 @@ print(X,y)
 
 定义神经网络时，创建两个矩阵，一个为输入词嵌入矩阵，另一个为输出词嵌入矩阵。词嵌入矩阵维度为`(vocab_size,embedding_size)`，`vocab_size`为词汇表的大小，`embedding_size`为词嵌入向量大小（例如常用 300 大小），如图<sup>[16]</sup>。
 
-<img src="../imgs/3_6/3_6_11.png" height='auto' width=800 title="caDesign"> 
+<img src="./imgs/3_6/3_6_11.png" height='auto' width=800 title="caDesign"> 
 
 在训练开始，用随机值初始化两个词嵌入矩阵。在迭代学习过程，对每一个样本输入，例如有输入词 not，和上下文邻近的词 thou（对应实际标签 `target` 的值为1），并用 NEG 方法采样了两个非邻近词 aaron 和 taco（对应实际标签 `target` 的值为0），通过对应随机初始化的两个嵌入矩阵查找输入词和输出词的词嵌入向量。取输入词和各输出词嵌入向量的点积（`input ● output`列），结果为一个数值，表示输入词嵌入和上下文词嵌入的相似性。用逻辑回归，`sigmoid()`函数将值转化为概率，获得预测，然后计算误差值用于梯度下降法更新开始随机生成的两个词嵌入矩阵。对应代码如下：
 
