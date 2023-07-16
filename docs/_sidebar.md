@@ -68,6 +68,7 @@
         * [3.5-D 马尔可夫随机场（MRF）和城市降温模型的 MRF 推理](./markdown/3_5_D_MRF.md)
     * [3.6 时空序列](./markdown/.md)
         * [3.6-A 从 RNN 到 Transformer 和 GPT，从自然语言处理到视觉模型](./markdown/3_6_A_从RNN到Transformer和GPT_从自然语言处理到视觉模型.md)
+        * [3.6-B 城市空间“语言”试验](./markdown/3_6_B_城市空间语言试验.md)
     * [3.7 （待+）条件维度](./markdown/.md)
     * [3.8 （待+）尺度效应](./markdown/.md)
     * [3.9 （待+）边缘效应](./markdown/.md)
