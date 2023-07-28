@@ -191,3 +191,28 @@ Hello World!
 \end{algorithmic}
 \end{algorithm}
 ```
+
+
+```algorithm
+% WGAN
+\begin{algorithm}
+\caption{Simple version of t-Distributed Stochastic Neighbor Embedding.}
+\begin{algorithmic}
+\STATE \textbf{Data}: data set $X=\left\{x_1, x_2, \ldots, x_n\right\}$,
+\STATE cost function parameters: perplexity Perp,
+\STATE optimization parameters: number of iterations $T$, learning rate $\eta$, momentum $\alpha(t)$.
+\STATE \textbf{Result}: low-dimensional data representation $\mathcal{Y}^{(T)}=\left\{y_1, y_2, \ldots, y_n\right\}$.
+\PROCEDURE{t-SNE}{}
+\STATE compute pairwise afﬁnities $p_{j \mid i}$ with perplexity Perp (using Equation 1)
+\STATE set $p_{i j}=\frac{p_{j \mid i}+p_{i \mid j}}{2 n}$
+\STATE sample initial solution $\mathcal{Y}^{(0)}=\left\{y_1, y_2, \ldots, y_n\right\}$ from $\mathcal{N}\left(0,10^{-4} I\right)$
+\FOR{$t=1$ to $T$}
+\STATE compute low-dimensional afﬁnities  $q_{i j}$ (using Equation 4)
+\STATE compute gradient $\frac{\delta C}{\delta y}$ (using Equation 5)
+\STATE set $\mathcal{Y}^{(t)}=\mathcal{Y}^{(t-1)}+\eta \frac{\delta C}{\delta \mathcal{Y}}+\alpha(t)\left(\mathcal{Y}^{(t-1)}-\mathcal{Y}^{(t-2)}\right)$
+\ENDFOR
+\ENDPROCEDURE
+\end{algorithmic}
+\end{algorithm}
+```
+
