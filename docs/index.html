@@ -23,6 +23,16 @@
 <body>
   <div id="app">USDS</div>
   <script>  
+	var gitalkConfig = {
+        clientID: '420b967b78a293cd52f8',
+        clientSecret: '19ca0efc1b1f32d6c3b06ab5ef16bae39314bdf1',
+        //accessToken: 'c2c0d38a8cb2f9c26277269568bf603fef7fa56ec',
+        repo: 'USDA_CH_endup',
+        owner: 'richieBao',
+        admin: ["richieBao"],
+        distractionFreeMode: false,
+        id: decodeURI(window.location.pathname),
+    }; 
     window.$docsify = {
         name: '城市空间数据分析方法',
         repo: 'https://github.com/richieBao/USDA_CH_endup',
@@ -165,17 +175,7 @@
     <script src="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/h-hg/docsify-pseudocode/dist/docsify-pseudocode.min.js"></script>
 
-    <script>
-        const gitalk = new Gitalk({
-          clientID: '420b967b78a293cd52f8',
-          clientSecret: '19ca0efc1b1f32d6c3b06ab5ef16bae39314bdf1',
-          repo: 'USDA_CH_endup',
-          owner: 'richieBao',
-          admin: ['richieBao'],
-          id: decodeURI(window.location.pathname),      // Ensure uniqueness and length less than 50
-          distractionFreeMode: false,  // Facebook-like distraction free mode
-        })
-      </script>
+
 
 
 </body>
