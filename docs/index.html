@@ -23,17 +23,6 @@
 <body>
   <div id="app">USDS</div>
   <script>  
-	var gitalkConfig = {
-        clientID: '420b967b78a293cd52f8',
-        clientSecret: '19ca0efc1b1f32d6c3b06ab5ef16bae39314bdf1',
-        //accessToken: 'c2c0d38a8cb2f9c26277269568bf603fef7fa56ec',
-        repo: 'USDA_CH_endup',
-        owner: 'richieBao',
-        admin: ["richieBao"],
-        distractionFreeMode: false,
-        //id: location.pathname,
-        //id: decodeURI(window.location.pathname),
-    }; 
     window.$docsify = {
         name: '城市空间数据分析方法',
         repo: 'https://github.com/richieBao/USDA_CH_endup',
@@ -86,31 +75,28 @@
         },  
         plugins: [
             function (hook, vm) {
+                hook.beforeEach(function (html) {
+                return html
+                    + '<hr/>'
+                    + '上次更新：{docsify-updated} '
+                })
+            },
+            function (hook, vm) {
+                hook.mounted(function() {
+                var div = Docsify.dom.create('div')
+                div.id = 'gitalk-container'
+                var main = Docsify.dom.getNode('#main')
+                div.style = `width: ${main.clientWidth}px; margin: 0 auto 20px;`
+                Docsify.dom.appendTo(Docsify.dom.find('.content'), div)
+                })
+
                 hook.doneEach(function() {
-                var label, domObj, main, divEle, gitalk;
-                label = vm.route.path.split("/").pop();
-                domObj = Docsify.dom;
-                main = domObj.getNode("#main");
-
-                Array.apply(
-                    null,
-                    document.querySelectorAll("div.gitalk-container")
-                ).forEach(function(ele) {
-                    ele.remove();
-                });
-
-                divEle = domObj.create("div");
-                divEle.id = "gitalk-container-" + label;
-                divEle.className = "gitalk-container";
-                divEle.style = "width: " + main.clientWidth + "px; margin: 0 auto 20px;";
-                domObj.appendTo(domObj.find(".content"), divEle);
-                gitalk = new Gitalk(
-                    Object.assign(gitalkConfig, { id: !label ? "home" : label })
-                );
-                gitalk.render("gitalk-container-" + label);
-                });
+                var el = document.getElementById('gitalk-container')
+                while(el.hasChildNodes()) el.removeChild(el.firstChild)
+                gitalk.render('gitalk-container')
+                })
             }
-            ], 
+            ],
        
     }
     </script>
@@ -131,9 +117,8 @@
     <!--搜索功能-->
     <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
     <!--评论功能，添加issue-->
-    <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
-    <script src="//unpkg.com/docsify/lib/plugins/gitalk.min.js"></script>
-    <script src="//unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
     <!--<script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.js"></script>-->
     <script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
     <!--放大图片-->
@@ -177,7 +162,19 @@
     <script src="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/h-hg/docsify-pseudocode/dist/docsify-pseudocode.min.js"></script>
 
-
+    <script>
+        const gitalk = new Gitalk({
+          clientID: '420b967b78a293cd52f8',
+          clientSecret: '19ca0efc1b1f32d6c3b06ab5ef16bae39314bdf1',
+          repo: 'USDA_CH_endup',
+          owner: 'richieBao',
+          admin: ['richieBao'],
+          //id: decodeURI(window.location.pathname),      // Ensure uniqueness and length less than 50
+          distractionFreeMode: false,  // Facebook-like distraction free mode
+          title: location.href,
+        })
+        gitalk.render('gitalk-container')
+      </script>
 
 </body>
 </html> 
