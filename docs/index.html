@@ -75,28 +75,31 @@
         },  
         plugins: [
             function (hook, vm) {
-                hook.beforeEach(function (html) {
-                return html
-                    + '<hr/>'
-                    + '上次更新：{docsify-updated} '
-                })
-            },
-            function (hook, vm) {
-                hook.mounted(function() {
-                var div = Docsify.dom.create('div')
-                div.id = 'gitalk-container'
-                var main = Docsify.dom.getNode('#main')
-                div.style = `width: ${main.clientWidth}px; margin: 0 auto 20px;`
-                Docsify.dom.appendTo(Docsify.dom.find('.content'), div)
-                })
-
                 hook.doneEach(function() {
-                var el = document.getElementById('gitalk-container')
-                while(el.hasChildNodes()) el.removeChild(el.firstChild)
-                gitalk.render('gitalk-container')
-                })
+                var label, domObj, main, divEle, gitalk;
+                label = vm.route.path.split("/").pop();
+                domObj = Docsify.dom;
+                main = domObj.getNode("#main");
+
+                Array.apply(
+                    null,
+                    document.querySelectorAll("div.gitalk-container")
+                ).forEach(function(ele) {
+                    ele.remove();
+                });
+
+                divEle = domObj.create("div");
+                divEle.id = "gitalk-container-" + label;
+                divEle.className = "gitalk-container";
+                divEle.style = "width: " + main.clientWidth + "px; margin: 0 auto 20px;";
+                domObj.appendTo(domObj.find(".content"), divEle);
+                gitalk = new Gitalk(
+                    Object.assign(gitalkConfig, { id: !label ? "home" : label })
+                );
+                gitalk.render("gitalk-container-" + label);
+                });
             }
-            ],
+            ], 
        
     }
     </script>
