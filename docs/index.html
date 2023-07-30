@@ -21,29 +21,19 @@
   </script>
 </head>
 <body>
-  <div id="app"></div>
-  <script>
-    var gitalkConfig = {
-        clientID: 'e7230c8629673f702a2b',
-        clientSecret: '1ac301e94f5cdaf7010397f19d4fbea3d5ff8aff',
-        //accessToken: 'c2c0d38a8cb2f9c26277269568bf603fef7fa56ec',
-        repo: 'USDA_CH_endup',
-        owner: 'richieBao',
-        admin: ["richieBao"],
-        id: window.location.pathname,
-        distractionFreeMode: false
-    };    
+  <div id="app">USDS</div>
+  <script>  
     window.$docsify = {
-      name: '城市空间数据分析方法',
-      repo: 'https://github.com/richieBao/USDA_CH_endup',
-      auto2top: true,
-      coverpage: false,
-      loadSidebar: true,
-      loadNavbar: true,
-      maxLevel: 4,
-      subMaxLevel: 6,
-      mergeNavbar: true,
-      search: {
+        name: '城市空间数据分析方法',
+        repo: 'https://github.com/richieBao/USDA_CH_endup',
+        auto2top: true,
+        coverpage: false,
+        loadSidebar: true,
+        loadNavbar: true,
+        maxLevel: 4,
+        subMaxLevel: 6,
+        mergeNavbar: true,
+        search: {
             maxAge: 86400000, // Expiration time, the default one day
             paths: 'auto',
             placeholder: '🔍 Type to search ',
@@ -75,6 +65,14 @@
             },
             isExpected: true
         },
+        pseudocode: {
+            indentSize: '1.2em',
+            commentDelimiter: '//',
+            lineNumber: false,
+            lineNumberPunc: ':',
+            noEnd: false,
+            titlePrefix: 'Algorithm'
+        },  
         plugins: [
             function (hook, vm) {
                 hook.doneEach(function() {
@@ -101,78 +99,83 @@
                 gitalk.render("gitalk-container-" + label);
                 });
             }
-            ],
-            pseudocode: {
-                indentSize: '1.2em',
-                commentDelimiter: '//',
-                lineNumber: false,
-                lineNumberPunc: ':',
-                noEnd: false,
-                titlePrefix: 'Algorithm'
-            },            
-        
+            ],          
     }
-</script>
+    </script>
 
-<style>
-    b{
-        font-size:26px;
-        color: #cfcfcf;
-        background: #e45656;
-        border-radius: 5px;
-        opacity: 85%;
-    }
+    <style>
+        b{
+            font-size:26px;
+            color: #cfcfcf;
+            background: #e45656;
+            border-radius: 5px;
+            opacity: 85%;
+        }
     </style>
 
-<script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
-<script src="//cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
-<script src="//cdn.jsdelivr.net/npm/vuep/dist/vuep.min.js"></script>
-<!--搜索功能-->
-<script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
-<!--评论功能，添加issue-->
-<script src="//unpkg.com/gitalk/dist/gitalk.min.js"></script>
-<!--<script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.js"></script>-->
-<script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
-<!--放大图片-->
-<script src="//unpkg.com/docsify/lib/plugins/zoom-image.js"></script>
-<!--代码高亮功能-->
-<script src="//unpkg.com/prismjs/components/prism-bash.min.js"></script>
-<script src="//unpkg.com/prismjs/components/prism-java.min.js"></script>
-<script src="//unpkg.com/prismjs/components/prism-python.min.js"></script>
-<script src="//unpkg.com/prismjs/components/prism-javascript.min.js"></script>
-<!--复制code-->
-<script src="https://unpkg.com/docsify-copy-code@2"></script>
-<!--计数-->
-<script src="//unpkg.com/docsify-count/dist/countable.min.js"></script>
-<!--tab功能-->
-<script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
-<!--流程图-->
-<script src="//unpkg.com/mermaid/dist/mermaid.js"></script>
-<script src="//unpkg.com/docsify-mermaid@latest/dist/docsify-mermaid.js"></script>
-<script>mermaid.initialize({startOnLoad: true});</script>
-<!--推特表情-->
-<script src="//cdn.jsdelivr.net/gh/TaQini/docsify-twemoji@master/twemoji.min.js"></script>
-<!--<script src="https://cdn.jsdelivr.net/npm/docsify-example-panels@1"></script>-->
-<!--format-->
+    <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/vuep/dist/vuep.min.js"></script>
+    <!--搜索功能-->
+    <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
+    <!--评论功能，添加issue-->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.css">
+    <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/gitalk.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.js"></script>-->
+    <script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
+    <!--放大图片-->
+    <script src="//unpkg.com/docsify/lib/plugins/zoom-image.js"></script>
+    <!--代码高亮功能-->
+    <script src="//unpkg.com/prismjs/components/prism-bash.min.js"></script>
+    <script src="//unpkg.com/prismjs/components/prism-java.min.js"></script>
+    <script src="//unpkg.com/prismjs/components/prism-python.min.js"></script>
+    <script src="//unpkg.com/prismjs/components/prism-javascript.min.js"></script>
+    <!--复制code-->
+    <script src="https://unpkg.com/docsify-copy-code@2"></script>
+    <!--计数-->
+    <script src="//unpkg.com/docsify-count/dist/countable.min.js"></script>
+    <!--tab功能-->
+    <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
+    <!--流程图-->
+    <script src="//unpkg.com/mermaid/dist/mermaid.js"></script>
+    <script src="//unpkg.com/docsify-mermaid@latest/dist/docsify-mermaid.js"></script>
+    <script>mermaid.initialize({startOnLoad: true});</script>
+    <!--推特表情-->
+    <script src="//cdn.jsdelivr.net/gh/TaQini/docsify-twemoji@master/twemoji.min.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/docsify-example-panels@1"></script>-->
+    <!--format-->
 
-<!-- PDFObject.js is a required dependency of this plugin -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script> 
-<!-- This is the source code of the pdf embed plugin -->
-<script src="path-to-file/docsify-pdf-embed.js"></script>
-<!-- or use this if you are not hosting the file yourself -->
-<script src="//unpkg.com/docsify-pdf-embed-plugin/src/docsify-pdf-embed.js"></script>
+    <!-- PDFObject.js is a required dependency of this plugin -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script> 
+    <!-- This is the source code of the pdf embed plugin -->
+    <script src="path-to-file/docsify-pdf-embed.js"></script>
+    <!-- or use this if you are not hosting the file yourself -->
+    <script src="//unpkg.com/docsify-pdf-embed-plugin/src/docsify-pdf-embed.js"></script>
 
-<!--docsify-katex-->
-<script src="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
-<script src="//cdn.jsdelivr.net/npm/marked@4"></script>
+    <!--docsify-katex-->
+    <script src="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+    <script src="//cdn.jsdelivr.net/npm/marked@4"></script>
 
-<!-- CDN files for docsify-katex -->
-<script src="//cdn.jsdelivr.net/npm/docsify-katex@latest/dist/docsify-katex.js"></script>
-<!-- or <script src="//cdn.jsdelivr.net/gh/upupming/docsify-katex@latest/dist/docsify-katex.js"></script> -->
+    <!-- CDN files for docsify-katex -->
+    <script src="//cdn.jsdelivr.net/npm/docsify-katex@latest/dist/docsify-katex.js"></script>
+    <!-- or <script src="//cdn.jsdelivr.net/gh/upupming/docsify-katex@latest/dist/docsify-katex.js"></script> -->
 
-<script src="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/h-hg/docsify-pseudocode/dist/docsify-pseudocode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/h-hg/docsify-pseudocode/dist/docsify-pseudocode.min.js"></script>
+
+    <script>
+        const gitalk = new Gitalk({
+          clientID: '420b967b78a293cd52f8',
+          clientSecret: '19ca0efc1b1f32d6c3b06ab5ef16bae39314bdf1',
+          repo: 'USDA_CH_endup',
+          owner: 'richieBao',
+          admin: ['richieBao'],
+          id: decodeURI(window.location.pathname),      // Ensure uniqueness and length less than 50
+          distractionFreeMode: false,  // Facebook-like distraction free mode
+        })
+      </script>
 
 
 </body>
