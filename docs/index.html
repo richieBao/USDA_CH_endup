@@ -31,7 +31,8 @@
         owner: 'richieBao',
         admin: ["richieBao"],
         distractionFreeMode: false,
-        id: decodeURI(window.location.pathname),
+        //id: location.pathname,
+        //id: decodeURI(window.location.pathname),
     }; 
     window.$docsify = {
         name: '城市空间数据分析方法',
@@ -109,7 +110,8 @@
                 gitalk.render("gitalk-container-" + label);
                 });
             }
-            ],          
+            ], 
+       
     }
     </script>
 
@@ -129,9 +131,9 @@
     <!--搜索功能-->
     <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
     <!--评论功能，添加issue-->
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.css">
-    <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/gitalk.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+    <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
+    <script src="//unpkg.com/docsify/lib/plugins/gitalk.min.js"></script>
+    <script src="//unpkg.com/gitalk/dist/gitalk.min.js"></script>
     <!--<script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.js"></script>-->
     <script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
     <!--放大图片-->
@@ -174,7 +176,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/h-hg/docsify-pseudocode/dist/docsify-pseudocode.min.js"></script>
-
 
 
 
