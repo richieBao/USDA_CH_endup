@@ -1,4 +1,4 @@
-> Created on Thu Jan  5 22:29:54 2023 @author: Richie Bao-caDesign设计(cadesign.cn)
+> Last updated on Sat Aug  5 19:54:19 2023 @author: Richie Bao-caDesign设计(cadesign.cn)
 
 ## 2.6.7 NAIP航拍影像与分割模型库及Colaboratory和Planetary Computer Hub
 
@@ -1152,11 +1152,10 @@ CoLab通常配合Google Drive使用，可以实现数据集和训练模型的无
 
 
 ```python
-%pip install torchgeo
-%pip install matplotlib==3.6.2
+%pip install torchgeo tensorboard pytorch_lightning
 ```
 
-需要修改`TorchGeo`库的部分代码，满足分析需要，可以通过`!pip show torchgeo`获取该库位置。
+如果要修改`TorchGeo`库的部分代码，满足分析需要，可以通过`!pip show torchgeo`获取该库位置。（本次试验未修改安装库的代码，但是通过代码迁移修改的方式实现）
 
 
 ```python
@@ -1164,15 +1163,60 @@ CoLab通常配合Google Drive使用，可以实现数据集和训练模型的无
 ```
 
     Name: torchgeo
-    Version: 0.3.1
+    Version: 0.4.1
     Summary: TorchGeo: datasets, samplers, transforms, and pre-trained models for geospatial data
     Home-page: https://github.com/microsoft/torchgeo
     Author: Adam J. Stewart
     Author-email: ajstewart426@gmail.com
     License: 
-    Location: /usr/local/lib/python3.8/dist-packages
-    Requires: einops, fiona, kornia, matplotlib, numpy, omegaconf, packaging, pillow, pyproj, pytorch-lightning, rasterio, rtree, scikit-learn, segmentation-models-pytorch, shapely, timm, torch, torchmetrics, torchvision
+    Location: /usr/local/lib/python3.10/dist-packages
+    Requires: einops, fiona, kornia, lightning, matplotlib, numpy, pillow, pyproj, rasterio, rtree, scikit-learn, segmentation-models-pytorch, shapely, timm, torch, torchmetrics, torchvision
     Required-by: 
+    
+
+
+```python
+%matplotlib inline
+%load_ext tensorboard
+
+import os
+from torchvision.transforms import Compose
+from torchgeo.datasets import RasterDataset,stack_samples,unbind_samples
+from torchgeo.datasets.utils import download_url
+
+from torchgeo.transforms import indices,AugmentationSequential
+import kornia.augmentation as K
+
+from torchgeo.samplers import RandomGeoSampler
+from torch.utils.data import DataLoader
+
+import matplotlib
+import numpy as np
+import matplotlib.pyplot as plt
+
+from torchgeo.datamodules import NAIPChesapeakeDataModule
+import torch
+from lightning.pytorch import Trainer
+from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint
+from lightning.pytorch.loggers import TensorBoardLogger
+from torchgeo.trainers import SemanticSegmentationTask
+from os import path
+import torch.nn as nn
+import torchvision.transforms as T
+from pytorch_lightning.loggers import CSVLogger
+
+import torchgeo
+from lightning.pytorch import LightningDataModule
+from torchgeo.datasets import BoundingBox
+
+import csv
+
+from torchgeo.samplers.batch import RandomBatchGeoSampler
+from torchgeo.samplers.single import GridGeoSampler
+```
+
+    The tensorboard extension is already loaded. To reload it, use:
+      %reload_ext tensorboard
     
 
 * 连接Google Drive
@@ -1194,24 +1238,26 @@ drive.mount('/content/gdrive')
 
 
 ```python
-import os
-imagery_data=os.path.join('/content/gdrive/MyDrive/data/delaware', "imagery") # 存储NAIP航拍影像数据
-LC_data=os.path.join('/content/gdrive/MyDrive/data/delaware', "LC") # 存储NAIP土地覆盖分类数据
-data_dir=os.path.join('/content/gdrive/MyDrive/data/delaware', "training") # 存储模型训练过程和结果文件
+root='/content/gdrive/MyDrive/dataset/naipNdelaware4seg'
+imagery_data=os.path.join(root, "imagery") # 存储NAIP航拍影像数据
+LC_data=os.path.join(root, "LC") # 存储NAIP土地覆盖分类数据
+data_dir=os.path.join(root, "training") # 存储模型训练过程和结果文件
 ```
 
 * NAIP图像数据下载
 
 训练时未使用全部Delaware区域影像，仅选取了4个瓦片。将瓦片编号录入文本文件`naipEntityID_selection.txt`下，传至Google Drive用于读取并下载对应图像数据至Google Drive。下载时直接调用`torchvision`库的`download_url`方法。
 
+下图为 Delaware 区域 13 类土地覆盖类型，及所用的 NAIP 7个影像瓦片。
+
 <img src="./imgs/2_6_7/2_6_7_01.png" height='auto' width='auto' title="caDesign">
 
 
 ```python
-naipEntityID_selection_fn=r'/content/gdrive/MyDrive/data/delaware/naipEntityID_selection.txt'
+naipEntityID_selection_fn=os.path.join(root,'naipEntityID_selection.txt')
 with open(naipEntityID_selection_fn,'r') as f:
     naipEntityID_selection=f.readlines()
-naipEntityID_selection=[line.rstrip() for line in naipEntityID_selection]   
+naipEntityID_selection=[line.rstrip() for line in naipEntityID_selection]
 naipEntityID_selection
 ```
 
@@ -1221,13 +1267,15 @@ naipEntityID_selection
     ['m_3807505_se_18_060_20180827.tif',
      'm_3807505_sw_18_060_20180815.tif',
      'm_3807504_se_18_060_20180815.tif',
-     'm_3807504_sw_18_060_20180815.tif']
+     'm_3807504_sw_18_060_20180815.tif',
+     'm_3807532_nw_18_060_20180815.tif',
+     'm_3807531_nw_18_060_20180815.tif',
+     'm_3807531_ne_18_060_20180815.tif']
 
 
 
 
 ```python
-from torchvision.datasets.utils import download_url
 naip_38075_url=("https://naipeuwest.blob.core.windows.net/naip/v002/de/2018/de_060cm_2018/38075/")
 
 naip_download_rul=lambda url,tile,root:download_url(url+tile,root)
@@ -1238,21 +1286,27 @@ for tile in naipEntityID_selection:
         print(f'Can not access to:{tile}')
 ```
 
-    Using downloaded and verified file: /content/gdrive/MyDrive/data/delaware/imagery/m_3807505_se_18_060_20180827.tif
-    Using downloaded and verified file: /content/gdrive/MyDrive/data/delaware/imagery/m_3807505_sw_18_060_20180815.tif
-    Downloading https://naipeuwest.blob.core.windows.net/naip/v002/de/2018/de_060cm_2018/38075/m_3807504_se_18_060_20180815.tif to /content/gdrive/MyDrive/data/delaware/imagery/m_3807504_se_18_060_20180815.tif
+    Using downloaded and verified file: /content/gdrive/MyDrive/dataset/naipNdelaware4seg/imagery/m_3807505_se_18_060_20180827.tif
+    Using downloaded and verified file: /content/gdrive/MyDrive/dataset/naipNdelaware4seg/imagery/m_3807505_sw_18_060_20180815.tif
+    Using downloaded and verified file: /content/gdrive/MyDrive/dataset/naipNdelaware4seg/imagery/m_3807504_se_18_060_20180815.tif
+    Using downloaded and verified file: /content/gdrive/MyDrive/dataset/naipNdelaware4seg/imagery/m_3807504_sw_18_060_20180815.tif
+    Downloading https://naipeuwest.blob.core.windows.net/naip/v002/de/2018/de_060cm_2018/38075/m_3807532_nw_18_060_20180815.tif to /content/gdrive/MyDrive/dataset/naipNdelaware4seg/imagery/m_3807532_nw_18_060_20180815.tif
     
 
-
-      0%|          | 0/485891786 [00:00<?, ?it/s]
-
-
-    Downloading https://naipeuwest.blob.core.windows.net/naip/v002/de/2018/de_060cm_2018/38075/m_3807504_sw_18_060_20180815.tif to /content/gdrive/MyDrive/data/delaware/imagery/m_3807504_sw_18_060_20180815.tif
+    100%|██████████| 489103340/489103340 [00:42<00:00, 11388534.38it/s]
     
 
+    Downloading https://naipeuwest.blob.core.windows.net/naip/v002/de/2018/de_060cm_2018/38075/m_3807531_nw_18_060_20180815.tif to /content/gdrive/MyDrive/dataset/naipNdelaware4seg/imagery/m_3807531_nw_18_060_20180815.tif
+    
 
-      0%|          | 0/506248627 [00:00<?, ?it/s]
+    100%|██████████| 497914540/497914540 [00:44<00:00, 11290614.87it/s]
+    
 
+    Downloading https://naipeuwest.blob.core.windows.net/naip/v002/de/2018/de_060cm_2018/38075/m_3807531_ne_18_060_20180815.tif to /content/gdrive/MyDrive/dataset/naipNdelaware4seg/imagery/m_3807531_ne_18_060_20180815.tif
+    
+
+    100%|██████████| 467740726/467740726 [00:40<00:00, 11532384.15it/s]
+    
 
 * 对应NAIP的土地覆盖类型数据下载
 
@@ -1268,14 +1322,11 @@ chesapeakebay_landcover_url += f"/{base_folder}/{zipfile}"
 
 
 ```python
-download_url(chesapeakebay_landcover_url, LC_data, filename=zipfile) 
+download_url(chesapeakebay_landcover_url, LC_data, filename=zipfile)
 ```
 
-    Downloading https://cicwebresources.blob.core.windows.net/chesapeakebaylandcover/DE/_DE_STATEWIDE.zip to /content/gdrive/MyDrive/data/delaware/LC/_DE_STATEWIDE.zip
+    Using downloaded and verified file: /content/gdrive/MyDrive/dataset/naipNdelaware4seg/LC/_DE_STATEWIDE.zip
     
-
-
-      0%|          | 0/287350495 [00:00<?, ?it/s]
 
 
 * 迁移解压缩代码
@@ -1393,9 +1444,10 @@ extract_archive(os.path.join(LC_data, zipfile))
 
 * 构建包含图像增强变换的训练数据集
 
+
 `TorchGeo`库设计时对图像增强变换的操作有两个途径，一个是构建训练数据集时，且融入到了具体的数据类型下，例如`torchgeo.datasets.NAIP(root, crs=None, res=None, transforms=None, cache=True)`集成了NAIP图像下载、图像增强变换和构建训练数据集等多个功能；另一个是用`DataLoader`加载小批量训练样本时，直接对小批量样本执行图像增强变换操作。在后续训练时调用`pytorch_lightning`库提供的`Trainer`类，其`fit(model, train_dataloaders=None, val_dataloaders=None, datamodule=None, ckpt_path=None)`方法提供`datamodule`，为`LightningDataModule`类的一个实例对象。`TorchGeop`构建的`NAIPChesapeakeDataModule(pl.LightningDataModule)`类继承了`LightningDataModule`类，`NAIPChesapeakeDataModule`构建时融合了土地覆盖类型数据的下载，并构建训练数据集，和NAIP训练数据集的构建，及一些图像增强变换操作，这些融合的方式虽然大幅度增加了数据处理的效率，但混杂也带来了很多数据处理分步的不清晰，和不便利，因此下述迁移更新了`NAIPChesapeakeDataModule`类，定义为为`geo_datamodule(pl.LightningDataModule)`。新定义的`geo_datamodule`类，拆离了训练数据集构建，从而把图像增强变换仅作用于训练数据集构建过程中，而不再混杂于`datamodule`的构建过程。这样也方便观察图像增强变换后的数据结果，及用于图像预测时输入数据的变换。
 
-土地覆盖类型中，树冠类有很多子类很难通过航拍影像识别，如果仍然保留进行训练将会影响训练收敛和预测精度，因此定义`labes_merge()`函数作为图像增强变换输入条件，合并部分分类。下述定义的变量`label_merge_mapping`合并了树冠类的各个子类，及灌丛和低矮植被，和不透水人造对象。同时，调整了标签数值，排序为1至8，缩减为8个土地覆盖类。分类数量由13类缩减为8类，也会提高训练收敛的速度及预测的精度。
+土地覆盖类型中，树冠类有很多子类很难通过航拍影像识别，如果仍然保留进行训练将会影响训练收敛和预测精度，因此定义`labes_merge()`函数作为图像增强变换输入条件，合并部分分类。下述定义的变量`label_merge_mapping`合并了树冠类的各个子类，及灌丛和低矮植被，和不透水人造对象。同时，调整了标签数值，排序为1至7，缩减为7个土地覆盖类；另，如果读取区域为空值，对应值则为 0。因此分类数量由13类缩减为8类（含空值类），以便提高训练收敛的速度及预测的精度。
 
 
 ```python
@@ -1434,9 +1486,10 @@ def labes_merge(sample: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns
         sample without the bbox property
-    """    
-
-    label_merge_mapping={1:1, # Water ->Water
+    """
+    label_merge_mapping={
+                        0:0, # Null
+                        1:1, # Water ->Water
                         2:2, # Emergent Wetlands -> Emergent Wetlands
                         3:3, # Tree Canopy -> Tree Canopy
                         4:4, # Scrub/Shrub -> Scrub/Shrub
@@ -1444,12 +1497,13 @@ def labes_merge(sample: Dict[str, Any]) -> Dict[str, Any]:
                         6:5, # Barren -> Barren(6->5)
                         7:6, # Impervious Structures -> Impervious Structures(7->6)
                         8:6, # Other Impervious -> Impervious Structures(7->6)
-                        9:7, # Impervious Road -> Impervious Road(9->7)
+                        9:6, # Impervious Road -> Impervious Road(9->7)
                         10:3, # Tree Canopy over Impervious Structure -> Tree Canopy
                         11:3, # Tree Canopy over Other Impervious -> Tree Canopy
                         12:3, # Tree Canopy over Impervious Roads -> Tree Canopy
-                        254:8, # Aberdeen Proving Ground -> Aberdeen Proving Ground(254->8)
+                        254:7, # Aberdeen Proving Ground -> Aberdeen Proving Ground(254->7)
                         }
+
     old=sample["mask"]
     indexer=np.array([label_merge_mapping.get(i, -1) for i in range(old.min(), old.max() + 1)])
     new=torch.from_numpy(indexer[(old - old.min())])
@@ -1460,17 +1514,15 @@ def labes_merge(sample: Dict[str, Any]) -> Dict[str, Any]:
 `TorchGeo`定义`RasterDataset`类时，输入的参数部分为全局变量（位于类下而于函数外），因此定义类的方式对变量进行赋值，例如对土地覆盖类型构建`TorchGeo`的`RasterDataset`栅格数据集，建立类`delaware_lc_rd(RasterDataset)`，继承`RasterDataset`类，并对父类的`filename_glob`变量进行更新。同时增加迁移的上述两个变换`chesapeake_transform`和`remove_bbox`。
 
 
-```python
-from torchvision.transforms import Compose
-from torchgeo.datasets import RasterDataset
 
-chesapeak_transforms=Compose([chesapeake_transform,remove_bbox])
+```python
+chesapeak_transforms=Compose([chesapeake_transform,remove_bbox,labes_merge])
 
 class delaware_lc_rd(RasterDataset):
     filename_glob="DE_STATEWIDE.tif"
     is_image=False
 
-chesapeake=delaware_lc_rd(LC_data,transforms=chesapeak_transforms) 
+chesapeake=delaware_lc_rd(LC_data,transforms=chesapeak_transforms)
 ```
 
 
@@ -1481,16 +1533,121 @@ print(f"crs:{chesapeake.crs}\nres:{chesapeake.res}")
     crs:ESRI:102039
     res:1.0
     
+    
 
-同样的方式操作NAIP图像，在图像增强变换时，增加了NDVI和NDWI两个指数层。
+同样的方式操作NAIP图像，在图像增强变换时，增加了 NDVI 一个指数层（同时也备用给出了 NDWI）。因为`TorchGeo`的`transforms`模块中计算指数时，将其结果追加到 dim=0 维度上，从而构建数据加载器时，本应输入维度为 4 维，变成了 5 维，如`(1,1,5,256,256)`，而应为`(1,5,256,256)`，因此直接迁移`TorchGeo`库对应代码，修改`AppendNormalizedDifferenceIndex`类的返回值`return input`为`return input[0]`，并直接调用。
 
 > 图像增强变换的内容和组合结构需要根据训练效果不断调整实验，使得训练收敛且提高预测精度。
 
 
 ```python
-from torchgeo.transforms import indices
-import kornia.augmentation as K
+from typing import Optional
 
+import torch
+from kornia.augmentation import IntensityAugmentationBase2D
+from torch import Tensor
+
+_EPSILON = 1e-10
+
+
+class AppendNormalizedDifferenceIndex(IntensityAugmentationBase2D):
+    r"""Append normalized difference index as channel to image tensor.
+
+    Computes the following index:
+
+    .. math::
+
+       \text{NDI} = \frac{A - B}{A + B}
+
+    .. versionadded:: 0.2
+    """
+
+    def __init__(self, index_a: int, index_b: int) -> None:
+        """Initialize a new transform instance.
+
+        Args:
+            index_a: reference band channel index
+            index_b: difference band channel index
+        """
+        super().__init__(p=1)
+        self.flags = {"index_a": index_a, "index_b": index_b}
+
+    def apply_transform(
+        self,
+        input: Tensor,
+        params: dict[str, Tensor],
+        flags: dict[str, int],
+        transform: Optional[Tensor] = None,
+    ) -> Tensor:
+        """Apply the transform.
+
+        Args:
+            input: the input tensor
+            params: generated parameters
+            flags: static parameters
+            transform: the geometric transformation tensor
+
+        Returns:
+            the augmented input
+        """
+        band_a = input[..., flags["index_a"], :, :]
+        band_b = input[..., flags["index_b"], :, :]
+        ndi = (band_a - band_b) / (band_a + band_b + _EPSILON)
+        ndi = torch.unsqueeze(ndi, -3)
+        input = torch.cat((input, ndi), dim=-3)
+        return input[0]
+
+class AppendNDVI(AppendNormalizedDifferenceIndex):
+    r"""Normalized Difference Vegetation Index (NDVI).
+
+    Computes the following index:
+
+    .. math::
+
+       \text{NDVI} = \frac{\text{NIR} - \text{R}}{\text{NIR} + \text{R}}
+
+    If you use this index in your research, please cite the following paper:
+
+    * https://doi.org/10.1016/0034-4257(79)90013-0
+    """
+
+    def __init__(self, index_nir: int, index_red: int) -> None:
+        """Initialize a new transform instance.
+
+        Args:
+            index_nir: index of the Near Infrared (NIR) band in the image
+            index_red: index of the Red band in the image
+        """
+        super().__init__(index_a=index_nir, index_b=index_red)
+
+class AppendNDWI(AppendNormalizedDifferenceIndex):
+    r"""Normalized Difference Water Index (NDWI).
+
+    Computes the following index:
+
+    .. math::
+
+       \text{NDWI} = \frac{\text{G} - \text{NIR}}{\text{G} + \text{NIR}}
+
+    If you use this index in your research, please cite the following paper:
+
+    * https://doi.org/10.1080/01431169608948714
+    """
+
+    def __init__(self, index_green: int, index_nir: int) -> None:
+        """Initialize a new transform instance.
+
+        Args:
+            index_green: index of the Green band in the image
+            index_nir: index of the Near Infrared (NIR) band in the image
+        """
+        super().__init__(index_a=index_green, index_b=index_nir)
+```
+
+定义继承父类`RasterDataset`的`naip_rd`类实现 NAIP 影像数据集定义。图像增强变换除了应用 NDVI 等指数试验外，增加了自定义的`naip_preprocess()`变换，将图像 4 个波段值归一化。
+
+
+```python
 def naip_preprocess(sample: Dict[str, Any]) -> Dict[str, Any]:
     """Transform a single sample from the NAIP Dataset.
 
@@ -1518,9 +1675,19 @@ class naip_rd(RasterDataset):
         \..*$
     """
     is_image=True
+    all_bands = ["R", "G", "B", "NIR"]
+    rgb_bands = ["R", "G", "B"]
 
-naip_transforms=Compose([naip_preprocess,remove_bbox,indices.AppendNDVI(index_nir=3, index_red=0),indices.AppendNDWI(index_green=1, index_nir=3)])
-naip=naip_rd(imagery_data,chesapeake.crs,chesapeake.res,naip_transforms)
+ndvi=AppendNDVI(index_nir=3, index_red=0)
+ndwi=AppendNDWI(index_green=1, index_nir=3)
+
+naip_transforms=Compose([
+    naip_preprocess,
+    remove_bbox,
+    AugmentationSequential(ndvi,data_keys=["image"])
+    ])
+
+naip=naip_rd(imagery_data,chesapeake.crs,chesapeake.res,transforms=naip_transforms)
 ```
 
 
@@ -1530,7 +1697,6 @@ print(f"crs:{naip.crs}\nres:{naip.res}")
 
     crs:ESRI:102039
     res:1.0
-    
 
 构建包含图像和类标的训练数据集。`TorchGeo`库重写了`__and__`、`__or__`等方法，可以直接对地理空间数据集执行交集和并集的操作。
 
@@ -1541,88 +1707,87 @@ dataset=chesapeake & naip
 
 * 查看图像增强变换后的数据集样本
 
-因为增加了NDVI和NDWI两个指数层，因此数组的纬度为`[1, 6, 256, 256]`，即包括R、G、B、Nir及NDVI和NDWI等6个波段。
+
+因为增加了 NDVI 一个指数层，因此数组的维度为`[1, 5, 256, 256]`，即包括R、G、B、Nir及NDVI等5个波段。
 
 
 ```python
-from torchgeo.samplers import RandomGeoSampler
-from torchgeo.datasets import stack_samples 
-from torch.utils.data import DataLoader
-
 sampler=RandomGeoSampler(dataset,size=256, length=10)
 dataloader=DataLoader(dataset, sampler=sampler, collate_fn=stack_samples)
 
-dataloader=iter(dataloader)
-batch=next(dataloader)
-print(batch['image'].shape)
+for batch in dataloader:
+    sample = unbind_samples(batch)[0]
+    print(sample.keys())
+    print(sample['image'].shape)
+    break
 ```
 
-    torch.Size([1, 6, 256, 256])
+    dict_keys(['crs', 'mask', 'image'])
+    torch.Size([5, 256, 256])
     
+
+> 注意下述所用生成的数据集含有 NDWI 指数，即含 6 个通道。
 
 
 ```python
-import matplotlib.pyplot as plt
-import torchvision.transforms as T
+sampler=RandomGeoSampler(dataset,size=256, length=10)
+dataloader=DataLoader(dataset, sampler=sampler, collate_fn=stack_samples)
 
-batch=next(dataloader)
-print(batch['image'].shape)
-plt.imshow(T.ToPILImage()(batch['image'][0][4:]));
+for batch in dataloader:
+    sample = unbind_samples(batch)[0]
+    print(sample.keys())
+    print(sample['image'].shape)
+
+    fig, axes= plt.subplots(1, 3,figsize=(20,10))
+    axes[0].imshow(T.ToPILImage()(sample['image'][:3]))
+    axes[1].imshow(T.ToPILImage()(sample['image'][4]))
+    axes[2].imshow(T.ToPILImage()(sample['image'][5]))
+    plt.show()
+
+    break
 ```
 
-    torch.Size([1, 6, 256, 256])
-    torch.Size([1, 6, 256, 256])
+    dict_keys(['crs', 'mask', 'image'])
+    torch.Size([6, 256, 256])
     
 
-<img src="./imgs/2_6_7/output_76_1.png" height='auto' width='auto' title="caDesign">
-    
+
+<img src="./imgs/2_6_7/output_81_1.png" height='auto' width='auto' title="caDesign">
+
 
 
 
 ```python
-import matplotlib
-import numpy as np
+np.unique(sample['mask'])
+```
 
+
+
+
+    array([3, 4, 5, 6, 7])
+
+
+
+
+```python
 LC_color_dict={
-    0: (0, 0, 0, 0),
-    1: (0, 197, 255, 255),
-    2: (0, 168, 132, 255),
-    3: (38, 115, 0, 255),
-    4: (76, 230, 0, 255),
-    5: (163, 255, 115, 255),
-    6: (255, 170, 0, 255),
-    7: (255, 0, 0, 255),
-    8: (156, 156, 156, 255),
-    #9: (0, 0, 0, 255),
-    #10: (115, 115, 0, 255),
-    #11: (230, 230, 0, 255),
-    #12: (255, 255, 115, 255),
-    #13: (197, 0, 255, 255),
+    # 0: (0, 0, 0, 0),
+    1: (30, 136, 229,255),
+    2: (230, 238, 156, 255),
+    3: (46, 125, 50,255),
+    4: (205, 220, 57, 255),
+    5: (176, 190, 197, 255),
+    6: (66, 66, 66, 255),
+    7: (189, 189, 189, 255),
     }
 
-cmap_LC, norm=matplotlib.colors.from_levels_and_colors(list(LC_color_dict.keys()),[[v/255 for v in i] for i in LC_color_dict.values()],extend='max')
-plt.imshow(np.squeeze(batch['mask']),cmap=cmap_LC);
-```
-
-<img src="./imgs/2_6_7/output_77_0.png" height='auto' width='auto' title="caDesign">
-    
-
-
-```python
-batch['mask']
+LC_color_dict_selection={k:LC_color_dict[k] for k,v in LC_color_dict.items()}
+cmap_LC, norm=matplotlib.colors.from_levels_and_colors(list(LC_color_dict_selection.keys()),[[v/255 for v in i] for i in LC_color_dict_selection.values()],extend='max')
+plt.imshow(np.squeeze(sample['mask']),cmap=cmap_LC);
 ```
 
 
-
-
-    tensor([[[4, 4, 4,  ..., 4, 4, 4],
-             [4, 4, 4,  ..., 4, 4, 4],
-             [4, 4, 4,  ..., 4, 4, 4],
-             ...,
-             [4, 4, 4,  ..., 3, 4, 4],
-             [4, 4, 4,  ..., 4, 4, 4],
-             [4, 4, 4,  ..., 4, 4, 4]]])
-
+<img src="./imgs/2_6_7/output_83_0.png" height='auto' width='auto' title="caDesign">    
 
 
 * 更新`datamodule`类
@@ -1631,21 +1796,11 @@ batch['mask']
 
 
 ```python
-# 迁移并更新于TorchGeo库：torchgeo.datamodules.naip模块
-
-import pytorch_lightning as pl
-import torchgeo
-from torch.utils.data import DataLoader
-import torch
-from torchgeo.datasets import BoundingBox,stack_samples
-from torchgeo.samplers.batch import RandomBatchGeoSampler
-from torchgeo.samplers.single import GridGeoSampler
-
-class geo_datamodule(pl.LightningDataModule):
+class Geo_datamodule(LightningDataModule):
     """LightningDataModule implementation for the TorchGeo datasets.
 
     Uses the train/val/test splits from the dataset.
-    """  
+    """
     # TODO: tune these hyperparams
     length=1000
     stride=128
@@ -1673,7 +1828,7 @@ class geo_datamodule(pl.LightningDataModule):
         self.ds_label=ds_label
         self.batch_size=batch_size
         self.num_workers=num_workers
-        self.patch_size=patch_size    
+        self.patch_size=patch_size
 
     def setup(self, stage: Optional[str] = None) -> None:
         """Initialize the main ``Dataset`` objects.
@@ -1706,7 +1861,7 @@ class geo_datamodule(pl.LightningDataModule):
 
         Returns:
             training data loader
-        """   
+        """
 
         return DataLoader(
             self.dataset,
@@ -1737,78 +1892,111 @@ class geo_datamodule(pl.LightningDataModule):
             testing data loader
         """
 
-        return DataLoader(            
+        return DataLoader(
             self.dataset,
             batch_size=self.batch_size,
             sampler=self.test_sampler,
             num_workers=self.num_workers,
             collate_fn=stack_samples,
-        ) 
+        )
+
+    def plot(
+        self,
+        sample: dict[str, Any],
+        show_titles: bool = True,
+        suptitle: Optional[str] = None,
+    ) -> plt.Figure:
+        """Plot a sample from the dataset.
+
+        Args:
+            sample: a sample returned by :meth:`RasterDataset.__getitem__`
+            show_titles: flag indicating whether to show titles above each panel
+            suptitle: optional string to use as a suptitle
+
+        Returns:
+            a matplotlib Figure with the rendered sample
+
+        .. versionchanged:: 0.3
+           Method now takes a sample dict, not a Tensor. Additionally, possible to
+           show subplot titles and/or use a custom suptitle.
+        """
+        image = sample["image"][0:3, :, :].permute(1, 2, 0)
+
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(4, 4))
+
+        ax.imshow(image)
+        ax.axis("off")
+        if show_titles:
+            ax.set_title("Image")
+
+        if suptitle is not None:
+            plt.suptitle(suptitle)
+
+        return fig
 ```
 
 
 ```python
-datamodule=geo_datamodule(
+datamodule=Geo_datamodule(
     ds_image=naip,
     ds_label=chesapeake,
     batch_size=64,
-    patch_size=256 
+    patch_size=256
     )
 ```
 
 * 构建深度学习网络模型
 
-`TorchGeo`的深度学习网络模型构建`SemanticSegmentationTask`类继承了`pytorch_lightning`的`LightningModule`类，并调用了`segmentation_models_pytorch`库的`unet`模型。配置了`aux_params`参数，返回掩码和分类标签。因为增加了NDVI和NDWI两个指数层，因此总共6个通道，配置`in_channels=6`。调整后的土地覆盖类型共计8类，因此配置`num_classes=8`。
+
+`TorchGeo`的深度学习网络模型构建`SemanticSegmentationTask`类继承了`pytorch_lightning`的`LightningModule`类，并调用了`segmentation_models_pytorch`库的`unet`模型。配置了`aux_params`参数，返回掩码和分类标签。因为增加了 NDVI 一个指数层，因此总共5个通道，配置`in_channels=5`。调整后的土地覆盖类型共计8类，因此配置`num_classes=8`。
 
 
 ```python
-from torchgeo.trainers import SemanticSegmentationTask
-
 aux_params=dict(
     pooling='avg',             # one of 'avg', 'max'
     dropout=0.5,               # dropout ratio, default is None
     activation='sigmoid',      # activation function, default is None
-    classes=8,                 # define number of output labels
-)
+    )
 
 task=SemanticSegmentationTask(
-    segmentation_model='unet', 
-    encoder_name='resnet34',
-    encoder_weights='imagenet',
+    model='unet',
+    backbone='resnet34',
+    weights='imagenet',
     pretrained=True,
-    in_channels=6,
+    in_channels=5, 
     num_classes=8,
-    ignore_index=7,
+    ignore_index=0,
     loss='ce', # 'jaccard'
     learning_rate=0.1,
     learning_rate_schedule_patience=5,
-    ignore_zeros=True,
     aux_params=aux_params,
     )
 ```
 
 * 配置训练参数
 
-`PyTorch Lightning`库提供的`Trainer`方法大幅度简化了训练参数的配置，如果不希望部分参数自动化处理，也可以自行配置。下述配置了`ModelCheckpoint`，通过配置`moniter`参数监测给定参数的值，定期保存模型。在` LightningModule`中使用` log() `或`log_dict()`记录的每个指标都可以为监控的对象；配置`EarlyStopping`，监控给定的指标，当该指标停止改进时则停止训练，这非常有利于了解到模型训练的程度，避免无效的训练，利于反复调参实验；配置`CSVLogger`，以YAML或CSV格式存储测量指标，用于后续读取分析；同时配置了训练文件、过程网络模型等保存的本地位置（本次存储到Google Drive中）`default_root_dir`；用`min_epochs`和`max_epochs`配置最小和最大的迭代次数；`fast_dev_run`为一种单元测试；配置`accelerator="gpu"`，支持传递不同的加速器类型，例如“cpu”, “gpu”, “tpu”, “ipu”, “hpu”, “mps, “auto”，及自定义的加速器实例等。`Trainer`方法提供的参数高达50多个，可以从官网查看应用。
+`PyTorch Lightning`库提供的`Trainer`方法大幅度简化了训练参数的配置，如果不希望部分参数自动化处理，也可以自行配置。下述配置了`ModelCheckpoint`，通过配置`moniter`参数监测给定参数的值，定期保存模型。在` LightningModule`中使用` log() `或`log_dict()`记录的每个指标都可以为监控的对象；配置`EarlyStopping`，监控给定的指标，当该指标停止改进时则停止训练，这非常有利于了解到模型训练的程度，避免无效的训练，利于反复调参实验；同时配置了训练文件、过程网络模型等保存的本地位置（本次存储到 Google Drive 中）`default_root_dir`；用`min_epochs`和`max_epochs`配置最小和最大的迭代次数；`fast_dev_run`为一种单元测试；配置`accelerator="gpu"`，支持传递不同的加速器类型，例如“cpu”, “gpu”, “tpu”, “ipu”, “hpu”, “mps, “auto”，及自定义的加速器实例等。`Trainer`方法提供的参数高达50多个，可以从官网查看应用。
+
+在配置日志时，给出了两种途径，一种是使用`CSVLogger`方法，以 YAML 或 CSV 格式存储测量指标，用于后续读取分析；另一种是使用`TensorBoardLogger`方法，后续可以直接用于训练报告查看。
 
 
 ```python
-from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
-from pytorch_lightning.loggers import CSVLogger
+accelerator = "gpu" if torch.cuda.is_available() else "cpu"
 
 checkpoint_callback=ModelCheckpoint(monitor="val_loss", dirpath=data_dir, save_top_k=1, save_last=True) #,save_on_train_epoch_end=True
 early_stopping_callback=EarlyStopping(monitor="val_loss", min_delta=0.00, patience=10)
-csv_logger=CSVLogger(save_dir=data_dir, name="segmentation_unet")
+# logger=CSVLogger(save_dir=data_dir, name="segmentation_unet")
+logger=TensorBoardLogger(save_dir=data_dir, name="tensorboard_logs",version=1,)
 in_tests="PYTEST_CURRENT_TEST" in os.environ
 
-trainer=pl.Trainer(
-    callbacks=[checkpoint_callback,early_stopping_callback], 
-    logger=[csv_logger],
+trainer=Trainer(
+    callbacks=[checkpoint_callback,early_stopping_callback],
+    logger=logger,
     default_root_dir=data_dir,
     min_epochs=1,
     max_epochs=300,
     fast_dev_run=in_tests,
-    accelerator="gpu",   
+    accelerator=accelerator,
     #limit_val_batches=500,
     )
 ```
@@ -1819,26 +2007,24 @@ trainer=pl.Trainer(
     INFO:pytorch_lightning.utilities.rank_zero:HPU available: False, using: 0 HPUs
     
 
+
 * 网络模型训练
 
 `fit`方法传入的参数`ckpt_path`，只对已经训练且保存的模型权重值有效，因此需要检查该文件是否已经存在。利用CoLab提供的GPU算力，模型达到给定指标不再有效提升时所需要的时间约为1个小时42分钟（CoLab Pro版）。
 
-
 ```python
-from os import path
-
 ckpt_path=os.path.join(data_dir,'last.ckpt')
 if path.exists(ckpt_path):
     print('ckpt file exists.')
-    trainer.fit(model=task,datamodule=datamodule,ckpt_path=ckpt_path)  
+    trainer.fit(model=task,datamodule=datamodule,ckpt_path=ckpt_path)
 else:
     trainer.fit(model=task,datamodule=datamodule)
 ```
-
-    /usr/local/lib/python3.8/dist-packages/pytorch_lightning/callbacks/model_checkpoint.py:604: UserWarning: Checkpoint directory /content/gdrive/MyDrive/data/delaware/training exists and is not empty.
+    /usr/local/lib/python3.10/dist-packages/lightning/pytorch/callbacks/model_checkpoint.py:613: UserWarning: Checkpoint directory /content/gdrive/MyDrive/dataset/naipNdelaware4seg/training exists and is not empty.
       rank_zero_warn(f"Checkpoint directory {dirpath} exists and is not empty.")
-    INFO:pytorch_lightning.accelerators.cuda:LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-    INFO:pytorch_lightning.callbacks.model_summary:
+    INFO: LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+    INFO:lightning.pytorch.accelerators.cuda:LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+    INFO: 
       | Name          | Type             | Params
     ---------------------------------------------------
     0 | model         | Unet             | 24.4 M
@@ -1850,52 +2036,32 @@ else:
     24.4 M    Trainable params
     0         Non-trainable params
     24.4 M    Total params
-    97.787    Total estimated model params size (MB)
-    
-
-
+    97.775    Total estimated model params size (MB)
+    INFO:lightning.pytorch.callbacks.model_summary:
+      | Name          | Type             | Params
+    ---------------------------------------------------
+    0 | model         | Unet             | 24.4 M
+    1 | loss          | CrossEntropyLoss | 0     
+    2 | train_metrics | MetricCollection | 0     
+    3 | val_metrics   | MetricCollection | 0     
+    4 | test_metrics  | MetricCollection | 0     
+    ---------------------------------------------------
+    24.4 M    Trainable params
+    0         Non-trainable params
+    24.4 M    Total params
+    97.775    Total estimated model params size (MB)
     Sanity Checking: 0it [00:00, ?it/s]
 
 
-    /usr/local/lib/python3.8/dist-packages/pytorch_lightning/utilities/data.py:85: UserWarning: Trying to infer the `batch_size` from an ambiguous collection. The batch size we found is 64. To avoid any miscalculations, use `self.log(..., batch_size=batch_size)`.
-      warning_cache.warn(
-    /usr/local/lib/python3.8/dist-packages/pytorch_lightning/trainer/trainer.py:1595: PossibleUserWarning: The number of training batches (15) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
-      rank_zero_warn(
-    
-
-
-    Training: 0it [00:00, ?it/s]
-
-
-
-    Validation: 0it [00:00, ?it/s]
-
-
-    /usr/local/lib/python3.8/dist-packages/pytorch_lightning/utilities/data.py:85: UserWarning: Trying to infer the `batch_size` from an ambiguous collection. The batch size we found is 8. To avoid any miscalculations, use `self.log(..., batch_size=batch_size)`.
-      warning_cache.warn(
-    
-
-
-    Validation: 0it [00:00, ?it/s]
-
-
-
-    Validation: 0it [00:00, ?it/s]
-
-
-
-    Validation: 0it [00:00, ?it/s]
-
-
-
 * 从日志（Log）中提取训练测量指标
+
+
+1）读取`CSVLogger`方法的日志
 
 测量指标已经存入Google Drive文件夹下，读取`metrics.csv`文件数据，并打印`Train loss`和`Validation Accuracy`指标，可以初步判断深度学习网络模型有效收敛，且验证数据集上的预测精度能够达到约0.8以上。
 
 
 ```python
-import csv
-
 if not in_tests:
     train_steps = []
     train_rmse = []
@@ -1922,8 +2088,6 @@ if not in_tests:
 
 
 ```python
-import matplotlib.pyplot as plt
-
 if not in_tests:
     plt.figure()
     plt.plot(train_steps, train_rmse, label="Train loss")
@@ -1935,9 +2099,37 @@ if not in_tests:
     plt.close()
 ```
 
-<img src="./imgs/2_6_7/output_90_0.png" height='auto' width='auto' title="caDesign">
-    
 
+<img src="./imgs/2_6_7/output_90_0.png" height='auto' width='auto' title="caDesign">    
+
+
+
+2）读取`TensorBoardLogger`方法的日志
+
+
+```python
+%tensorboard --logdir "$data_dir"  
+```
+
+<img src="./imgs/2_6_7/2_6_7_02.png" height='auto' width='auto' title="caDesign">
+
+* TorchMetrics 指标度量库
+
+[TorchMetrics](https://torchmetrics.readthedocs.io/en/stable/)<sup>⑲</sup> 集合了 100+ 个指标实现，且提供了一个易于使用的 API（Application Programming Interface）用于自定义指标。该 API 提供了可以增加再现性（reproducibility）的一个标准化接口；并兼容分布式训练；可以在批次（batch）间自动积累；在多个设备间自动同步；并经过了严格的测试。
+
+上述影像分割实验中，`TorchGeo`库在`SemanticSegmentationTask`类中引入了`TorchMetrics`提供的`MulticlassAccuracy`和`MulticlassJaccardIndex`两个指标。
+
+1）`MulticlassAccuracy` 为多分类精度计算，公式为$\text { Accuracy }=\frac{1}{N} \sum_i^N 1\left(y_i=\hat{y}_i\right)$，式中，$y$为真实标签（目标值），$\hat{y}$为预测值。如上图`val_MulticlassAccuracy`标签部分；
+
+2）`MulticlassJaccardIndex`为多分类 Jaccard 指数，即交并集，也称为 Jaccard 相似系数，公式为$J(A, B)=\frac{|A \cap B|}{|A \cup B|}$。如有，
+
+| 真实值\预测值  |A   | B  | C  |
+|---|---|---|---|
+| **A**  | AA  | AB  | Ac  |
+| **B**  | BA  | BB  | BC  |
+| **C**  | CA  | CB  | CC  |
+
+则多分类 Jaccard 指数计算可表述为$\frac{\mathrm{AA}+\mathrm{BB}+\mathrm{CC}}{\mathrm{AA}+\mathrm{AB}+\mathrm{AC}+\mathrm{BA}+\mathrm{BB}+\mathrm{BC}+\mathrm{CA}+\mathrm{CB}+\mathrm{CC}}$；Jaccard 平均得分计算可表述为$\frac{1}{3}\left(\frac{\mathrm{AA}}{\mathrm{AA}+\mathrm{AB}+\mathrm{AC}+\mathrm{BA}+\mathrm{CA}}+\frac{\mathrm{BB}}{\mathrm{AB}+\mathrm{BA}+\mathrm{BB}+\mathrm{BC}+\mathrm{CB}}+\frac{\mathrm{CC}}{\mathrm{AC}+\mathrm{BC}+\mathrm{CA}+\mathrm{CB}+\mathrm{CC}}\right)$。
 
 * 测试数据集测试
 
@@ -1948,38 +2140,41 @@ if not in_tests:
 trainer.test(model=task, datamodule=datamodule)
 ```
 
-    INFO:pytorch_lightning.accelerators.cuda:LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+    INFO: LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+    INFO:lightning.pytorch.accelerators.cuda:LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+    /usr/local/lib/python3.10/dist-packages/lightning/pytorch/trainer/connectors/data_connector.py:224: PossibleUserWarning: The dataloader, test_dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 4 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+      rank_zero_warn(
     
 
 
     Testing: 0it [00:00, ?it/s]
 
 
-    /usr/local/lib/python3.8/dist-packages/pytorch_lightning/utilities/data.py:85: UserWarning: Trying to infer the `batch_size` from an ambiguous collection. The batch size we found is 12. To avoid any miscalculations, use `self.log(..., batch_size=batch_size)`.
-      warning_cache.warn(
-    
 
-    ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-           Test metric             DataLoader 0
-    ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-          test_Accuracy         0.8202915191650391
-        test_JaccardIndex       0.2725767493247986
-            test_loss           0.5870120525360107
-    ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃<span style="font-weight: bold">         Test metric         </span>┃<span style="font-weight: bold">        DataLoader 0         </span>┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│<span style="color: #008080; text-decoration-color: #008080">   test_MulticlassAccuracy   </span>│<span style="color: #800080; text-decoration-color: #800080">      0.362870454788208      </span>│
+│<span style="color: #008080; text-decoration-color: #008080"> test_MulticlassJaccardIndex </span>│<span style="color: #800080; text-decoration-color: #800080">     0.35294270515441895     </span>│
+│<span style="color: #008080; text-decoration-color: #008080">          test_loss          </span>│<span style="color: #800080; text-decoration-color: #800080">     0.45782798528671265     </span>│
+└─────────────────────────────┴─────────────────────────────┘
+</pre>
 
 
 
 
-    [{'test_loss': 0.5870120525360107,
-      'test_Accuracy': 0.8202915191650391,
-      'test_JaccardIndex': 0.2725767493247986}]
+
+
+    [{'test_loss': 0.45782798528671265,
+      'test_MulticlassAccuracy': 0.362870454788208,
+      'test_MulticlassJaccardIndex': 0.35294270515441895}]
+
 
 
 
 * 用训练的模型预测
 
-这里并未使用用于训练下载的4个NAIP图像瓦片，而是下载了新的16个图像瓦片，新建立数据集，随机采样用已经训练好的模型进行预测。从预测结果来看，所提取的样本包括3、4、6三个分类，对应林冠、灌木丛和不透水区域，目视分类图结果，能够较好的对原始的NAIP图像进行语义分割（解译）。
+这里并未使用用于训练下载的4个NAIP图像瓦片，而是下载了新的16个图像瓦片，新建立数据集，随机采样用已经训练好的模型进行预测。从预测结果来看，所提取的样本包括1、3、4、6三个分类，对应水体、林冠、灌木丛和不透水区域，目视分类图结果，能够较好的对原始的NAIP图像进行语义分割（解译）。
 
 
 ```python
@@ -1988,7 +2183,15 @@ from torchgeo.datasets import NAIP,stack_samples
 from torch.utils.data import DataLoader
 import torch
 
-X_pre=NAIP(r'/content/gdrive/MyDrive/data/delaware_imagery_temp',transforms=naip_transforms)
+import matplotlib.pyplot as plt
+import torchvision.transforms as T
+import matplotlib
+import numpy as np
+```
+
+
+```python
+X_pre=NAIP(r'E:\data\Delaware\imagery_test',transforms=naip_transforms)
 X_sample=RandomGeoSampler(X_pre, size=1024,length=100) 
 X_dataloader=DataLoader(X_pre, sampler=X_sample, collate_fn=stack_samples)
 X_dataloader_=iter(X_dataloader)
@@ -1997,19 +2200,14 @@ X_dataloader_=iter(X_dataloader)
 
 ```python
 X_batch=next(X_dataloader_)
-X=X_batch["image"]#.float()
-```
-
-
-```python
-import matplotlib.pyplot as plt
-import torchvision.transforms as T
+X=X_batch["image"] #.float()
 
 plt.imshow(T.ToPILImage()(X[0][:3]));
 ```
 
 
-<img src="./imgs/2_6_7/output_96_0.png" height='auto' width='auto' title="caDesign">    
+<img src="./imgs/2_6_7/output_106_0.png" height='auto' width='auto' title="caDesign">    
+
 
 
 ```python
@@ -2038,23 +2236,28 @@ print(y_pred.shape,'\n',y_pred,'\n',y_pred.unique())
     torch.Size([1, 1024, 1024]) 
      tensor([[[4, 4, 4,  ..., 4, 4, 4],
              [4, 4, 4,  ..., 4, 4, 4],
-             [4, 4, 4,  ..., 6, 4, 4],
+             [4, 4, 3,  ..., 4, 4, 4],
              ...,
-             [6, 6, 6,  ..., 4, 4, 4],
-             [4, 4, 6,  ..., 4, 4, 4],
-             [4, 4, 6,  ..., 4, 4, 4]]]) 
-     tensor([3, 4, 6])
+             [4, 4, 4,  ..., 4, 4, 4],
+             [4, 4, 4,  ..., 4, 4, 4],
+             [4, 4, 4,  ..., 4, 4, 4]]]) 
+     tensor([1, 3, 4, 6])
     
 
 
 ```python
-import matplotlib
-import numpy as np
+LC_color_dict_selection={k:LC_color_dict[k] for k,v in LC_color_dict.items()}
+cmap_LC, norm=matplotlib.colors.from_levels_and_colors(list(LC_color_dict_selection.keys()),[[v/255 for v in i] for i in LC_color_dict_selection.values()],extend='max')
+```
 
+
+```python
 plt.imshow(np.squeeze(y_pred),cmap=cmap_LC);
 ```
 
-<img src="./imgs/2_6_7/output_101_0.png" height='auto' width='auto' title="caDesign">
+
+<img src="./imgs/2_6_7/output_112_0.png" height='auto' width='auto' title="caDesign">    
+
     
 ---
 
@@ -2095,6 +2298,8 @@ plt.imshow(np.squeeze(y_pred),cmap=cmap_LC);
 ⑰ Colaborator，CoLab，（<https://colab.research.google.com/>）。
 
 ⑱ Planetary Computer Hub，PcHub，（<https://pccompute.westeurope.cloudapp.azure.com/compute/hub>）。
+
+⑲ TorchMetrics，(<https://torchmetrics.readthedocs.io/en/stable/>)。
 
 参考文献（References）:
 
