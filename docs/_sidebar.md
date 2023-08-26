@@ -71,7 +71,7 @@
         * [3.6-A 从 RNN 到 Transformer 和 GPT，从自然语言处理到视觉模型](./markdown/3_6_A_从RNN到Transformer和GPT_从自然语言处理到视觉模型.md)
         * [3.6-B 城市空间“语言”试验](./markdown/3_6_B_城市空间语言试验.md)
     * [3.7 维度空间](./markdown/3_7_维度空间.md)
-    * [3.8 （待+）尺度效应](./markdown/.md)
+    * [3.8 尺度效应](./markdown/3_8_尺度效应.md)
     * [3.9 （待+）强化学习](./markdown/.md)
     * [3.10 （待+）大模型](./markdown/.md)
 * 4\. 理论工具
