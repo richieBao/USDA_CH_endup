@@ -1415,4 +1415,4 @@ __6.4__  itertools库
 
 ① itertools — Functions creating iterators for efficient looping，（<https://docs.python.org/3/library/itertools.html>）。
 
-<a href="/ipynb/PCS_6_函数_recursion_lambda_generator.ipynb" >PC6-ipynb download</a>
+<a href="./ipynb/PCS_6_函数_recursion_lambda_generator.ipynb" >PC6-ipynb download</a>

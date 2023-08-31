@@ -931,4 +931,4 @@ print(d_s_3)
 ⑨ Configuring setuptools using pyproject.toml files，（<https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html>）。
 
 
-<a href="/ipynb/PCS_7_模块与包_module_package.ipynb" >PC7-ipynb download</a>
+<a href="./ipynb/PCS_7_模块与包_module_package.ipynb" >PC7-ipynb download</a>

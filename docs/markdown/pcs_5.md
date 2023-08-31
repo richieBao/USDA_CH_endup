@@ -1044,4 +1044,4 @@ boxplot_custom(random_val_dict,frameOn=['bottom','left'],median_linewidth=5)
 
 ② matplotlib，是一个综合库，用于在Python中创建静态、动画和交互式数据可视化（<https://matplotlib.org/>）。
 
-<a href="/ipynb/PCS_5_函数_def_scope_arguments.ipynb" >PC5-ipynb download</a>
+<a href="./ipynb/PCS_5_函数_def_scope_arguments.ipynb" >PC5-ipynb download</a>

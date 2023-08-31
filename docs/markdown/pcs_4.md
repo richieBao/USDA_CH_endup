@@ -1420,4 +1420,4 @@ print({k:int(v) for k,v in name2hasInstances_dict.items()})
 [1] (日)高桥 信著,陈刚译.株式会社TREND-PRO漫画制作.漫画统计学[M].科学出版社.北京,2019.8.
 
 
-<a href="/ipynb/PCS_4_基本语句_if_for.ipynb" >PC4-ipynb download</a>
+<a href="./ipynb/PCS_4_基本语句_if_for.ipynb" >PC4-ipynb download</a>

@@ -762,4 +762,4 @@ print("GIndustrial_GSR={:.3f}%".format(GIndustrial_GSR))
 ② platform， Access to underlying platform’s identifying data，访问底层平台的识别数据 （<https://docs.python.org/3/library/platform.html?highlight=platform#module-platform>）。
 
 
-<a href="/ipynb/PCS_1_善用print()，基础运算，变量及赋值.ipynb" >PC1-ipynb download</a>
+<a href="./ipynb/PCS_1_善用print()，基础运算，变量及赋值.ipynb" >PC1-ipynb download</a>
