@@ -1719,3 +1719,6 @@ pattern.findall(text)
 ⑩ Anaconda，包含了Python的环境管理、代码编辑器、包管理等软件平台（<https://www.anaconda.com/>）。
 
 ⑪ Matplotlib，Python图表库，课创建静态、动画和交互式数据可视化（<https://matplotlib.org/>）。
+
+
+<a href="/ipynb/PCS_3_数据结构_string.ipynb" >PC3-ipynb download</a>

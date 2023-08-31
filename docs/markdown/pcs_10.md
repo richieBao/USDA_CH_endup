@@ -983,3 +983,5 @@ with open("myfile.txt") as f:
 [1] Errors and Exceptions, <https://docs.python.org/3/tutorial/errors.html>.
 
 [2] Built-in Exceptions, <https://docs.python.org/3/library/exceptions.html>.
+
+<a href="/ipynb/PCS_10_异常-errors and exceptions.ipynb" >PC10-ipynb download</a>

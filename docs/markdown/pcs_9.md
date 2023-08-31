@@ -1435,3 +1435,7 @@ Line #    Mem usage    Increment  Occurences   Line Contents
 [1] Primer on Python Decorators, <https://realpython.com/primer-on-python-decorators/>.
 
 [2] classmethod() in Python, <https://www.geeksforgeeks.org/classmethod-in-python/>.
+
+
+
+<a href="/ipynb/PCS_9_(OOP)_Classes_decorator.ipynb" >PC9-ipynb download</a>

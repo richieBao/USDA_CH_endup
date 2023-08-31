@@ -760,3 +760,6 @@ print("GIndustrial_GSR={:.3f}%".format(GIndustrial_GSR))
 ① 标准库，The Python Standard Library，Python 标准库非常庞大，提供的组件涉及范围十分广泛，包含了多个内置模块 (以 C 编写)，可以用来实现系统级功能，例如文件 I/O；也有大量Python编写的模块，提供了日常编程中许多问题的标准解决方案；其中有些模块经过专门设计，通过将特定平台功能抽象化为平台中立的 API 来鼓励和加强 Python 程序的可移植性。Windows 版本的 Python 安装程序通常包含整个标准库，往往还包含许多额外组件。对于类 Unix 操作系统，Python 通常会分成一系列的软件包，因此可能需要使用操作系统所提供的包管理工具来获取部分或全部可选组件（<https://docs.python.org/3/library/index.html>）。
 
 ② platform， Access to underlying platform’s identifying data，访问底层平台的识别数据 （<https://docs.python.org/3/library/platform.html?highlight=platform#module-platform>）。
+
+
+<a href="/ipynb/PCS_1_善用print()，基础运算，变量及赋值.ipynb" >PC1-ipynb download</a>

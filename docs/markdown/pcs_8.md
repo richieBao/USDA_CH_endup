@@ -1370,3 +1370,6 @@ print(sales_attrDict)
 ① 关于Class类Python官网的几个小案例，（<https://docs.python.org/3/tutorial/classes.html>）。
 
 ② shelve — Python object persistence，（<https://docs.python.org/3/library/shelve.html>）。
+
+
+<a href="/ipynb/PCS_8_(OOP)_Classes_define_inheritance_constructor_private.ipynb" >PC8-ipynb download</a>

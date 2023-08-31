@@ -1591,3 +1591,6 @@ print(FS_1|FS_2)
 ① sklearn（scikit-learn）机器学习，（<https://scikit-learn.org/stable>）；PyTorch，（<https://pytorch.org>）；NumPy，（<https://numpy.org>）；pandas，（<(https://pandas.pydata.org>）；GeoPandas，（<https://geopandas.org/en/stable>）。
 
 ② Unicode，The Unicode Standard，是一个信息技术标准，用于对世界上大多数书写系统所表达的文本进行统一编码、表示和处理。该系统由Unicode Consortium 维护，截至目前的版本（15.0）共定义了149,186个字符，涵盖了161种现代和历史文字，以及符号、表情符号（包括颜色）和非视觉控制和格式化代码（<https://home.unicode.org/>）。
+
+
+<a href="/ipynb/PCS_2_数据结构_list_tuple_dict_set.ipynb" >PC2-ipynb download</a>
