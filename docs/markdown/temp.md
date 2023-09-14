@@ -169,6 +169,7 @@ Hello World!
 \end{algorithm}
 ```
 
+
 ```algorithm
 % WGAN
 \begin{algorithm}
@@ -216,6 +217,232 @@ Hello World!
 \end{algorithm}
 ```
 
+
+```algorithm
+% WGAN
+\begin{algorithm}
+\caption{A simple bandit algorithm}
+\begin{algorithmic}
+\FOR{$a = 1$ to $k$(\textbf{Initialize})}
+\STATE  $Q(a) \leftarrow 0$
+\STATE $N(a) \leftarrow 0$
+\ENDFOR
+\WHILE{(\textbf{Loop forever})}
+\STATE $A \leftarrow \begin{cases}\operatorname{argmax}_a Q(a) & \text { with probability } 1-\varepsilon \quad \text { (breaking ties randomly) } \\ \text { a random action } & \text { with probability } \varepsilon\end{cases} $
+\STATE $R \leftarrow \operatorname{bandit}(A)$
+\STATE $N(A) \leftarrow N(A)+1$
+\STATE $Q(A) \leftarrow Q(A)+\frac{1}{N(A)}[R-Q(A)]$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+```
+
+```algorithm
+% WGAN
+\begin{algorithm}
+\caption{Policy Iteration (using iterative policy evaluation) for estimating }
+\begin{algorithmic}
+\STATE \textbf{1. Initialization}
+\STATE $V(s) \in \mathbb{R}$ and  $\pi(s) \in \mathcal{A}(s)$ arbitrarily for all $s \in \mathcal{S}$; $V(terminal)\doteq 0$
+\STATE \textbf{2. Policy Evaluation}
+\WHILE{(\textbf{Loop})}
+\STATE $\Delta \leftarrow 0$
+\FOR{Loop for each $s \in \mathcal{S}$}
+\STATE $v \leftarrow V(s)$
+\STATE $V(s) \leftarrow \sum_{s^{\prime}, r} p\left(s^{\prime}, r \mid s, \pi(s)\right)\left[r+\gamma V\left(s^{\prime}\right)\right]$
+\STATE $\Delta \leftarrow \max (\Delta,|v-V(s)|)$
+\ENDFOR 
+\STATE until $\Delta<\theta$ (a small positive number determining the accuracy of estimation)
+\ENDWHILE 
+\STATE \textbf{3. Policy Improvement}
+\STATE $policy-stable \leftarrow true$
+\FOR{each $s \in \mathcal{S}$}
+\STATE $old-action \leftarrow \pi(s)$
+\STATE $ \pi(s) \leftarrow \arg \max _a \sum_{s^{\prime}, r} p\left(s^{\prime}, r \mid s, a\right)\left[r+\gamma V\left(s^{\prime}\right)\right]$
+\IF{$old-action \neq \pi(s)$}
+\STATE $policy-stable \leftarrow false$
+\ENDIF
+\ENDFOR 
+\IF{$policy-stable$}
+\STATE stop and return $V \approx v_*$ and $\pi \approx \pi_*$
+\ELSE 
+\STATE got to 2
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+```
+
+```algorithm
+% WGAN
+\begin{algorithm}
+\caption{First-visit MC prediction, for estimating $V \approx v_\pi$}
+\begin{algorithmic}
+\STATE \textbf{Input:}  a policy $\pi$ to be evaluated
+\STATE \textbf{Initialize:} 
+\STATE $V(s) \in \mathbb{R}$, arbitrarily, for all $s \in \mathcal{S}$
+\STATE Returns (s) $\leftarrow$ an empty list, for all $s \in \mathcal{S}$
+\WHILE{(\textbf{Loop forever},for each episode)}
+\STATE Generate an episode following $\pi: S_0, A_0, R_1, S_1, A_1, R_2, \ldots, S_{T-1}, A_{T-1}, R_T$
+\STATE $G \leftarrow 0$
+\FOR{(Loop for each step of episode, $t=T-1, T-2, \ldots, 0$ )}
+\STATE  $G \leftarrow \gamma G+R_{t+1}$
+\STATE Unless $S_t$ appears in $S_0, S_1, \ldots, S_{t-1}$:
+\STATE Append $G$ to Returns $\left(S_t\right)$
+\STATE $V\left(S_t\right) \leftarrow \text { average }\left(\operatorname{Returns}\left(S_t\right)\right)$
+\ENDFOR 
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+```
+
+```algorithm
+% WGAN
+\begin{algorithm}
+\caption{Monte Carlo ES (Exploring Starts), for estimating $\pi \approx \pi_*$}
+\begin{algorithmic}
+\STATE \textbf{Initialize:} 
+\STATE $ \pi(s) \in \mathcal{A}(s) \text { (arbitrarily), for all } s \in \mathcal{S}$
+\STATE $ Q(s, a) \in \mathbb{R} \text { (arbitrarily), for all } s \in \mathcal{S}, a \in \mathcal{A}(s)$
+\STATE $\text { Returns }(s, a) \leftarrow \text { empty list, for all } s \in \mathcal{S}, a \in \mathcal{A}(s)$
+\WHILE{(\textbf{Loop forever},for each episode)}
+\STATE Choose $S_0 \in \mathcal{S}, A_0 \in \mathcal{A}\left(S_0\right)$ randomly such that all pairs have probability $>0$ Generate an episode from $S_0, A_0$, following $\pi: S_0, A_0, R_1, \ldots, S_{T-1}, A_{T-1}, R_T$
+\STATE $G \leftarrow 0$
+\FOR{(Loop for each step of episode, $t=T-1, T-2, \ldots, 0$ )}
+\STATE  $G \leftarrow \gamma G+R_{t+1}$
+\STATE Unless the pair $S_t, A_t$ appears in $S_0, A_0, S_1, A_1 \ldots, S_{t-1}, A_{t-1}$:
+\STATE Append $G$ to Returns $\left(S_t, A_t\right)$
+\STATE $Q\left(S_t, A_t\right) \leftarrow \operatorname{average}\left(\operatorname{Returns}\left(S_t, A_t\right)\right)$
+\STATE $\pi\left(S_t\right) \leftarrow \arg \max _a Q\left(S_t, a\right)$
+\ENDFOR 
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+```
+
+```algorithm
+% WGAN
+\begin{algorithm}
+\caption{Tabular $\mathrm{TD}(0)$ for estimating $v_\pi$}
+\begin{algorithmic}
+\STATE \textbf{Input:} the policy $\pi$ to be evaluated
+\STATE \textbf{Algorithm parameter:} step size $\alpha \in(0,1]$
+\STATE \textbf{Initialize} $V(s)$, for all $s \in \mathcal{S}^{+}$, arbitrarily except that $V($ terminal $)=0$
+\FOR{(Loop for each episode)}
+\STATE \textbf{Initialize} $S$
+\FOR{(Loop for each step of episode)}
+\STATE $\quad A \leftarrow$ action given by $\pi$ for $S$
+\STATE Take action $A$, observe $R, S^{\prime}$
+\STATE $\quad V(S) \leftarrow V(S)+\alpha\left[R+\gamma V\left(S^{\prime}\right)-V(S)\right]$
+\STATE  $S \leftarrow S^{\prime}$
+\ENDFOR 
+\ENDFOR 
+\end{algorithmic}
+\end{algorithm}
+```
+
+
+```algorithm
+% WGAN
+\begin{algorithm}
+\caption{Sarsa (on-policy TD control) for estimating $Q \approx q_*$}
+\begin{algorithmic}
+\STATE \textbf{Algorithm parameter:} step size $\alpha \in(0,1]$, small $\varepsilon>0$
+\STATE \textbf{Initialize} $Q(s, a)$, for all $s \in \mathcal{S}^{+}, a \in \mathcal{A}(s)$, arbitrarily except that $Q($ terminal,$\cdot)=0$
+\FOR{(Loop for each episode)}
+\STATE \textbf{Initialize} $S$
+\STATE Choose $A$ from $S$ using policy derived from $Q$ (e.g., $\varepsilon$-greedy)
+\FOR{(Loop for each step of episode)}
+\STATE Take action $A$, observe $R, S^{\prime}$
+\STATE Choose $A^{\prime}$ from $S^{\prime}$ using policy derived from $Q$ (e.g., $\varepsilon$-greedy)
+\STATE $Q(S, A) \leftarrow Q(S, A)+\alpha\left[R+\gamma Q\left(S^{\prime}, A^{\prime}\right)-Q(S, A)\right]$
+\STATE  $S \leftarrow S^{\prime} ; A \leftarrow A^{\prime} $;
+\ENDFOR 
+\STATE until $S$ is terminal
+\ENDFOR 
+\end{algorithmic}
+\end{algorithm}
+```
+
+```algorithm
+% WGAN
+\begin{algorithm}
+\caption{Q-learning (off-policy TD control) for estimating $\pi \approx \pi_*$}
+\begin{algorithmic}
+\STATE \textbf{Algorithm parameter:} step size $\alpha \in(0,1]$, small $\varepsilon>0$
+\STATE \textbf{Initialize} $Q(s, a)$, for all $s \in \mathcal{S}^{+}, a \in \mathcal{A}(s)$, arbitrarily except that $Q($ terminal,$\cdot)=0$
+\FOR{(Loop for each episode)}
+\STATE \textbf{Initialize} $S$
+\FOR{(Loop for each step of episode)}
+\STATE Choose $A$ from $S$ using policy derived from $Q$ (e.g., $\varepsilon$-greedy)
+\STATE Take action $A$, observe $R, S^{\prime}$
+\STATE $Q(S, A) \leftarrow Q(S, A)+\alpha\left[R+\gamma \max _a Q\left(S^{\prime}, a\right)-Q(S, A)\right]$
+\STATE $S \leftarrow S^{\prime}$
+\ENDFOR 
+\STATE until $S$ is terminal
+\ENDFOR 
+\end{algorithmic}
+\end{algorithm}
+```
+
+
+```algorithm
+% WGAN
+\begin{algorithm}
+\caption{$n$-step TD for estimating $V \approx v_\pi$}
+\begin{algorithmic}
+\STATE \textbf{Input:} a policy $\pi$
+\STATE \textbf{Algorithm parameter:} step size $\alpha \in(0,1]$, a positive integer $n$
+\STATE \textbf{Initialize} $V(s)$ arbitrarily, for all $s \in \mathcal{S}$
+\STATE All store and access operations (for $S_t$ and $R_t$ ) can take their index $\bmod n+1$
+\FOR{(Loop for each episode)}
+\STATE \textbf{Initialize and store} $S_0 \neq$ terminal
+\STATE $T \leftarrow \infty$
+\FOR{(Loop for $t=0,1,2, \ldots$ )}
+\IF{$t<T$}
+\STATE Take an action according to $\pi\left(\cdot \mid S_t\right)$
+\STATE Observe and store the next reward as $R_{t+1}$ and the next state as $S_{t+1}$
+\IF{$S_{t+1}$ is terminal}
+\STATE $T \leftarrow t+1$
+\ENDIF
+\ENDIF
+\STATE  $\tau \leftarrow t-n+1 \quad$ ( $\tau$ is the time whose state's estimate is being updated)
+\IF{$\tau \geq 0$}
+\STATE $G \leftarrow \sum_{i=\tau+1}^{\min (\tau+n, T)} \gamma^{i-\tau-1} R_i$
+\IF{$\tau+n<T$}
+\STATE $G \leftarrow G+\gamma^n V\left(S_{\tau+n}\right)$
+\ENDIF
+\STATE $V\left(S_\tau\right) \leftarrow V\left(S_\tau\right)+\alpha\left[G-V\left(S_\tau\right)\right]$
+\ENDIF
+\ENDFOR 
+\STATE Until $\tau=T-1$
+\ENDFOR 
+\end{algorithmic}
+\end{algorithm}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
 | 角色      |      工作     |  修行者 |
 |:----------|:-------------|:------|
 | 作者 |  完成著作的主体，保证成书的完成； |<img src="./imgs/author/richie.jpg" height="auto" width="120" style="border-radius:50%" title="caDesign"><em>包瑞清(Richie Bao)-西建大（中）</em></a>|
@@ -224,6 +451,6 @@ Hello World!
 | 语言君 | 英语语言纠正，修正审核，不含翻译（翻译由作者初翻）； | <img src="./imgs/author/Migel.jpg" height="auto" width="120" style="border-radius:50%" title="Migel Santos"> <em>Migel Santos</em><img src="./imgs/author/xutao.jpg" height="auto" width="120" style="border-radius:50%" title="许韬"><em>许韬(Tao Xu)</em> |
 | 贡献者(测试君) | [数字营造学社](https://digit-x.github.io/digit_x/#/)，和更大基数的社区伙伴们； |<a href="https://digit-x.github.io/digit_x/#/"><img src="./imgs/author/avatar.png" height="auto" width="120" style="border-radius:50%" title="digti-x"></a> <em>数字营造学社(digit-x):王育辉、刘航宇、张旭阳、柴金玉、戴礽祁、许保平、赵丽璠、张卜予</em> |
 |技术审稿人 |负责代码审核，保证代码质量。 |<img src="./imgs/author/ChengHong.jfif" height="auto" width="120" style="border-radius:50%" title="Vacant Position"> <em>程宏 (Hong Cheng)-Kwangwoon University光云大学（韩）</em> |
-
+-->
 
 
