@@ -420,10 +420,58 @@ Hello World!
 \end{algorithm}
 ```
 
+```algorithm
+% WGAN
+\begin{algorithm}
+\caption{Tabular Dyna-Q}
+\begin{algorithmic}
+\STATE \textbf{Initialize} $Q(s, a)$ and $\operatorname{Model}(s, a)$ for all $s \in \mathcal{S}$ and $a \in \mathcal{A}(s)$
+\WHILE{(\textbf{Loop forever})}
+\STATE (a) $S \leftarrow$ current (nonterminal) state
+\STATE (b) $A \leftarrow \varepsilon$-greedy $(S, Q)$
+\STATE (c) Take action $A$; observe resultant reward, $R$, and state, $S^{\prime}$
+\STATE (d) $Q(S, A) \leftarrow Q(S, A)+\alpha\left[R+\gamma \max _a Q\left(S^{\prime}, a\right)-Q(S, A)\right]$
+\STATE (e) $\operatorname{Model}(S, A) \leftarrow R, S^{\prime}$ (assuming deterministic environment)
+\FOR{(Loop repeat $n$ times)}
+\STATE $S \leftarrow$ random previously observed state
+\STATE $A \leftarrow$ random action previously taken in $S$
+\STATE $R, S^{\prime} \leftarrow \operatorname{Model}(S, A)$
+\STATE $Q(S, A) \leftarrow Q(S, A)+\alpha\left[R+\gamma \max _a Q\left(S^{\prime}, a\right)-Q(S, A)\right]$
+\ENDFOR 
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+```
 
 
-
-
+```algorithm
+% WGAN
+\begin{algorithm}
+\caption{Prioritized sweeping for a deterministic environment}
+\begin{algorithmic}
+\STATE \textbf{Initialize} $Q(s, a)$ and $\operatorname{Model}(s, a)$ for all $s \in \mathcal{S}$ and $a \in \mathcal{A}(s)$
+\WHILE{(\textbf{Loop forever})}
+\STATE (a) $S \leftarrow$ current (nonterminal) state
+\STATE (b) $A \leftarrow \operatorname{policy}(S, Q)$
+\STATE (c) Take action $A$; observe resultant reward, $R$, and state, $S^{\prime}$
+\STATE (d) $\operatorname{Model}(S, A) \leftarrow R, S^{\prime}$
+\STATE (e) $P \leftarrow\left|R+\gamma \max _a Q\left(S^{\prime}, a\right)-Q(S, A)\right|$.
+\STATE (f) if $P>\theta$, then insert $S, A$ into $P Queue$  with priority $P$
+\FOR{(Loop repeat $n$ times, while $P Queue$ is not empty)}
+\STATE $S, A \leftarrow \operatorname{first}(P Queue )$
+\STATE $R, S^{\prime} \leftarrow \operatorname{Model}(S, A)$
+\STATE $R, S^{\prime} \leftarrow \operatorname{Model}(S, A)$
+\STATE $Q(S, A) \leftarrow Q(S, A)+\alpha\left[R+\gamma \max _a Q\left(S^{\prime}, a\right)-Q(S, A)\right]$
+\FOR{(Loop for all $\bar{S}, \bar{A}$ predicted to lead to $S$)}
+\STATE $\bar{R} \leftarrow$ predicted reward for $\bar{S}, \bar{A}, S$
+\STATE $P \leftarrow\left|\bar{R}+\gamma \max _a Q(S, a)-Q(\bar{S}, \bar{A})\right| .$
+\STATE if $P>\theta$ then insert $\bar{S}, \bar{A}$ into $P Q u e u e$ with priority $P$
+\ENDFOR 
+\ENDFOR 
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+```
 
 
 
