@@ -75,7 +75,7 @@
     * [3.9 强化学习](./markdown/.md)
         * [3.9-A 表格型求解方法](./markdown/3_9_A_强化学习_表格型求解方法.md)
         * [3.9-B Gymnasium 环境构建到深度强化学习（Deep RL）](./markdown/3_9_B_强化学习_Gymnasium_环境构建到深度强化学习.md)
-        * [3.9-C 多智能体强化学习（MARL）](./markdown/.md)
+        * [3.9-C （待+）多智能体强化学习（MARL）](./markdown/.md)
     * [3.10 （待+）大模型](./markdown/.md)
 * 4\. 理论工具
     * [4.1 （待+）城市空间数据分析方法理论研究框架](./markdown/4_1_城市空间数据分析方法理论研究框架.md)
