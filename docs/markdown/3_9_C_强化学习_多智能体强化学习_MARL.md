@@ -1775,10 +1775,10 @@ env.close()
 ```python
 anim=usda_rl.plot_animation(frames,interval=300,figsize=(10,10))
 anim.save(filename="../imgs/3_9_c/navona_v1_rnd.gif", writer="pillow")
-#HTML(anim.to_jshtml())
+HTML(anim.to_jshtml())
 ```
 
-<img src="./imgs/3_9_c/simple_realworld_PPO.gif" height='auto' width='auto' title="caDesign"> 
+<img src="../imgs/3_9_c/navona_v1_rnd.gif" height='auto' width='auto' title="caDesign"> 
 
 * 训练模型
 
