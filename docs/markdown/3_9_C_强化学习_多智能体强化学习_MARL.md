@@ -1778,7 +1778,7 @@ anim.save(filename="../imgs/3_9_c/navona_v1_rnd.gif", writer="pillow")
 HTML(anim.to_jshtml())
 ```
 
-<img src="../imgs/3_9_c/navona_v1_rnd.gif" height='auto' width='auto' title="caDesign"> 
+<img src="./imgs/3_9_c/navona_v1_rnd.gif" height='auto' width='auto' title="caDesign"> 
 
 * 训练模型
 
