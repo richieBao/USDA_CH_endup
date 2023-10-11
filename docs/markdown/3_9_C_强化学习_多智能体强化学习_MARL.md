@@ -587,7 +587,7 @@ anim.save(filename="../imgs/3_9_c/waterworld_v4.gif")
 HTML(anim.to_jshtml())
 ```
 
-<img src="../imgs/3_9_c/waterworld_v4_small.gif" height='auto' width='auto' title="caDesign"> 
+<img src="./imgs/3_9_c/waterworld_v4_small.gif" height='auto' width='auto' title="caDesign"> 
 
 查看观测空间向量。
 
