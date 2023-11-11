@@ -473,7 +473,25 @@ Hello World!
 \end{algorithm}
 ```
 
-
+```algorithm
+% WGAN
+\begin{algorithm}
+\caption{One iteration of the 1-dim. Weisfeiler-Lehman test of graph isomorphism}
+\begin{algorithmic}
+\STATE \textbf{1: Multiset-label determination} 
+\STATE • For $i=0$, set $M_i(v):=l_0(v)=\ell(v) .$
+\STATE • For $i>0$, assign a multiset-label $M_i(v)$ to each node $v$ in $G$ and $G^{\prime}$ which consists of the multiset $\left\{l_{i-1}(u) \mid u \in \mathcal{N}(v)\right\}$.
+\STATE \textbf{2: Sorting each multiset} 
+\STATE • Sort elements in $M_i(v)$ in ascending order and concatenate them into a string $s_i(v)$.
+\STATE • Add $l_{i-1}(v)$ as a prefix to $s_i(v)$ and call the resulting string $s_i(v)$.
+\STATE \textbf{3: Label compression} 
+\STATE • Sort all of the strings $s_i(v)$ for all $v$ from $G$ and $G^{\prime}$ in ascending order.
+\STATE • Map each string $s_i(v)$ to a new compressed label, using a function $f: \Sigma^* \rightarrow \Sigma$ such that $f\left(s_i(v)\right)=f\left(s_i(w)\right)$ if and only if $s_i(v)=s_i(w)$.
+\STATE \textbf{4: Relabeling} 
+\STATE • Set $l_i(v):=f\left(s_i(v)\right)$ for all nodes in $G$ and $G^{\prime}$.
+\end{algorithmic}
+\end{algorithm}
+```
 
 
 
@@ -504,4 +522,7 @@ Hello World!
 
     * [PCS_X Python新特性更新](./markdown/pcs_quize.md)  
 
-    测试结果updated; 目录结构调整
+
+
+
+
