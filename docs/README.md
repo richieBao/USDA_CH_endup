@@ -8,16 +8,19 @@
 
 **Alexis Arias Betancourt**
 
+Alexis Arias, is a Ph.D scholar affiliated with the Illinois Institute of Technology. His research pursuits center around sustainable transportation infrastructure, with a primary emphasis on the application of autonomous and ubiquitous technologies. Alexis Arias has authored and co-authored publications such as "Driverless City: The Urban Possibilities of Autonomous Vehicles and Navigation Safety."
 
 #### 技术审稿人：
 
 **程宏**
 
+程宏，目前在韩国光云大学攻读计算机工程博士学位。他的研究兴趣包括机器学习、深度学习、通信领域路径损耗建模和基于地理信息的图生图方法等。同时，也正在向大模型微调训练领域拓展更多的可能性。
+
 #### 贡献者：
 
-数字营造学社:王育辉、刘航宇、张旭阳、柴金玉、戴礽祁、许保平、赵丽璠、张卜予
+数字营造学社:王育辉、刘航宇、张旭阳、柴金玉、戴礽祁、许保平、赵丽璠、张卜予、王垚
 
-王垚
+
 
 
 #### 资助：
